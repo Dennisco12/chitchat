@@ -2,6 +2,8 @@
 """Module containing the entry point of the command interpreter."""
 import cmd
 import sys
+import event
+
 
 class ChitChatCommand(cmd.Cmd):
     """This class represents the command interpreter
@@ -16,8 +18,8 @@ class ChitChatCommand(cmd.Cmd):
         Returns:
             str: The next line of command to execute.
         """
-        pass
-    
+        return line
+
     def postcmd(self, stop, line):
         """Runs some actions after a line of command is executed.
         Args:
@@ -49,6 +51,11 @@ class ChitChatCommand(cmd.Cmd):
         print("")
         return True
 
+    def do_echo(self, line):
+        """Echo command"""
+        print(line)
+
 
 if __name__ == '__main__':
+    event.connectToSocket()
     ChitChatCommand().cmdloop()
