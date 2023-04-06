@@ -5,6 +5,11 @@ const app = express();
 const server = http.createServer(app);
 const mysql = require("mysql");
 const DBStorage = require("./engine/db_storage");
+const admin = require("firebase-admin");
+const serviceAccount = require("secret/serviceAccountKey.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
