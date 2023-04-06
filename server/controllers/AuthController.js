@@ -2,14 +2,13 @@ const sha1 = require("sha1");
 const { v4: uuidv4 } = require("uuid");
 const dbClient = require("../engine/db_storage");
 const redisClient = require("../engine/redis");
-const Queue = require("bull");
-
-const userQueue = new Queue("userQueue", "redis://127.0.0.1:6379");
+const userQueue = require("../worker");
 
 const AuthController = {
   async getSignup(request, response) {
-    let { email, password, username } = request.body;
-
+    let { email } = request.body;
+    let { password } = request.body;
+    let { username } = request.body;
     if (!email) {
       response.status(401).json({ error: "Please provide an email address" });
       return;
@@ -25,41 +24,31 @@ const AuthController = {
       return;
     }
 
-    const users = dbClient.usersCollection();
-
-    // Check if the username already exists
+    const users = await dbClient.usersCollection();
     const existingUser = await users.findOne({ username });
     if (existingUser) {
       response.status(400).json({ error: "Username already exists" });
       return;
     }
-
-    users.findOne({ email }, (err, user) => {
-      if (user) {
-        response.status(400).json({ error: "Already exist" });
-      } else {
-        const hashedPassword = sha1(password);
-        users
-          .insertOne({
-            email,
-            password: hashedPassword,
-            username,
-            isVerified: false,
-          })
-          .then(async (result) => {
-            const token = uuidv4();
-            const key = `auth_${token}`;
-            await redisClient.set(
-              key,
-              result.insertedId.toString(),
-              60 * 60 * 24
-            );
-            userQueue.add({ userId: result.insertedId });
-            response.status(201).json({ id: result.insertedId, email, token });
-          })
-          .catch((error) => console.log(error));
-      }
+    const user = await users.findOne({ email });
+    if (user) {
+      response.status(400).json({ error: "Already exist" });
+      return;
+    }
+    const hashedPassword = sha1(password);
+    const insertionInfo = await users.insertOne({
+      email,
+      password: hashedPassword,
+      username,
+      isVerified: false,
     });
+    const userId = insertionInfo.insertedId.toString();
+    const token = uuidv4();
+    const key = `auth_${token}`;
+    redisClient.set(key, userId, 60 * 60 * 24);
+    response.status(201).json({ id: userId, email, token });
+    userQueue.add({ userId: userId });
+    return;
   },
 
   async getLogout(request, response) {

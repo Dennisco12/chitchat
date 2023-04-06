@@ -1,15 +1,14 @@
 const nodemailer = require("nodemailer");
 
-let transporter = nodemailer.createTransport({
-  service: "hotmail",
+const transporter = nodemailer.createTransport({
+  service: "gmail",
   auth: {
-    user: "chit-chat.dev@outlook.com",
-    pass: "chit_pwd1234",
+    user: "chitchatcli@gmail.com",
+    pass: "hvmbtqhsadzhdrae",
   },
 });
-
 const HTMLTemp = {
-  otp(code) {
+  otp(code, username) {
     return `<!DOCTYPE html>
         <html lang="en">
           <head>
@@ -52,7 +51,7 @@ const HTMLTemp = {
                     text-align: center;
                   "
                 >
-                  Hello there,
+                  Hello there ${username},
                 </p>
                 <p
                   style="
@@ -111,21 +110,26 @@ const HTMLTemp = {
 };
 
 const Mailer = {
-  sendOpt(to) {
+  sendOpt(to, username, otp) {
     const mailOptions = {
       from: {
         name: "Chit Chat",
-        address: "chit-chat.dev@outlook.com",
+        address: "chitchatcli@gmail.com",
       },
       to,
       subject: "Chit Chat Otp Verification",
-      html: HTMLTemp.otp("123456"),
+      html: HTMLTemp.otp(otp, username),
     };
-    return transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log(err);
-      }
-    });
+
+    try {
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
   },
 };
 

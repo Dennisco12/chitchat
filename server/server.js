@@ -10,6 +10,7 @@ const io = require("socket.io")(server, {
   },
 });
 
+app.use(express.json());
 app.use("/", routes);
 require("./routes/socketFunctions")(io);
 

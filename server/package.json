@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon server.js worker.js",
+    "dev": "nodemon server.js",
     "start": "node server.js",
     "start-worker": "nodemon --exec worker.js"
   },
