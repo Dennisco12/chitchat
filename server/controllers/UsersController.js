@@ -4,6 +4,7 @@ const redisClient = require("../engine/redis");
 const otpGenerator = require("otp-generator");
 const Mailer = require("../utils/mailer");
 const { v4: uuidv4 } = require("uuid");
+const userQueue = require("../worker");
 
 class UsersController {
   static async getMe(request, response) {
@@ -96,24 +97,6 @@ class UsersController {
     }
   }
 
-  static async generateOTP(email, username) {
-    const otp = otpGenerator.generate(6, {
-      upperCaseAlphabets: false,
-      specialChars: false,
-    });
-    const users = await dbClient.usersCollection();
-    const result = await users.updateOne(
-      { email: email },
-      { $set: { otp: otp } }
-    );
-    if (result.modifiedCount > 0) {
-      Mailer.sendOpt(email, username, otp);
-      return otp;
-    } else {
-      return null;
-    }
-  }
-
   static async sendOTP(request, response) {
     const { email, username } = request.body;
     if (!email) {
@@ -161,7 +144,10 @@ class UsersController {
       return;
     }
 
-    await users.updateOne({ email }, { $set: { isVerified: true } });
+    await users.updateOne(
+      { email },
+      { $set: { isVerified: true }, $unset: { otp: "" } }
+    );
 
     const token = uuidv4();
     const key = `auth_${token}`;
@@ -170,6 +156,8 @@ class UsersController {
     response
       .status(200)
       .json({ message: "OTP confirmed successfully", token, email });
+    userQueue.add({ userId: user._id, type: "welcome" });
+    return;
   }
 }
 

@@ -1,12 +1,13 @@
 const { ObjectId } = require("mongodb");
-const Queue = require("bull");
-const UsersController = require("./controllers/UsersController");
 const dbClient = require("./engine/db_storage");
+const Mailer = require("./utils/mailer");
+const Functions = require("./utils/functions");
+const Queue = require("bull");
 
 const userQueue = new Queue("userQueue", "redis://127.0.0.1:6379");
 
 userQueue.process(async (job, done) => {
-  const { userId } = job.data;
+  const { userId, type } = job.data;
 
   if (!userId) done(new Error("Missing userId"));
   const users = await dbClient.usersCollection();
@@ -15,7 +16,11 @@ userQueue.process(async (job, done) => {
   if (user) {
     console.log(`Welcome ${user.email}!`);
     console.log(`Sending otp to ${user.email}!`);
-    UsersController.generateOTP(user.email, user.username);
+    if (type === "welcome") {
+      Mailer.sendWelcomeEmail(user.email, user.username);
+    } else {
+      Functions.generateOTP(user.email, user.username, type);
+    }
     done();
   } else {
     done(new Error("User not found"));

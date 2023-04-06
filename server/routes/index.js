@@ -9,6 +9,8 @@ router.get("/", (req, res) => {
 
 router.post("/signup", AuthController.getSignup);
 router.post("/login", AuthController.getLogin);
+router.post("/resetPassword", AuthController.getResetPassword);
+router.put("/resetPassword", AuthController.getUpdatePassword);
 router.get("/users/me", UsersController.getMe);
 router.post("/users/checkUsernameExists", UsersController.checkUsernameExists);
 router.post("/users/sendOTP", UsersController.sendOTP);
