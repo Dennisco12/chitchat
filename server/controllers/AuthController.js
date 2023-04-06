@@ -8,8 +8,7 @@ const userQueue = new Queue("userQueue", "redis://127.0.0.1:6379");
 
 const AuthController = {
   async getSignup(request, response) {
-    let { email } = request.body;
-    let { password } = request.body;
+    let { email, password, username } = request.body;
 
     if (!email) {
       response.status(401).json({ error: "Please provide an email address" });
@@ -20,7 +19,20 @@ const AuthController = {
       response.status(401).json({ error: "Please provide a password" });
       return;
     }
+
+    if (!username) {
+      response.status(401).json({ error: "Please provide a username" });
+      return;
+    }
+
     const users = dbClient.usersCollection();
+
+    // Check if the username already exists
+    const existingUser = await users.findOne({ username });
+    if (existingUser) {
+      response.status(400).json({ error: "Username already exists" });
+      return;
+    }
 
     users.findOne({ email }, (err, user) => {
       if (user) {
@@ -31,6 +43,8 @@ const AuthController = {
           .insertOne({
             email,
             password: hashedPassword,
+            username,
+            isVerified: false,
           })
           .then(async (result) => {
             const token = uuidv4();

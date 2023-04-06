@@ -7,7 +7,6 @@
     "dev": "nodemon server.js worker.js",
     "start": "node server.js",
     "start-worker": "nodemon --exec worker.js"
-
   },
   "keywords": [],
   "author": "",
@@ -19,6 +18,8 @@
     "firebase-admin": "^11.5.0",
     "mongodb": "^5.2.0",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.9.1",
+    "otp-generator": "^4.0.1",
     "redis": "^4.6.5",
     "sha1": "^1.1.1",
     "socket.io": "^4.6.1"

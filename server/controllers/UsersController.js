@@ -1,6 +1,7 @@
 const ObjectID = require("mongodb").ObjectID;
 const dbClient = require("../engine/db_storage");
 const redisClient = require("../engine/redis");
+const otpGenerator = require("otp-generator");
 
 class UsersController {
   static async getMe(request, response) {
@@ -43,6 +44,57 @@ class UsersController {
         response.status(204).send();
       }
     });
+  }
+
+  static async checkUsernameExists(request, response) {
+    let { username } = request.body;
+
+    const users = dbClient.usersCollection();
+    const existingUser = await users.findOne({ username });
+    if (existingUser) {
+      response.status(400).json({ error: "Username already exists" });
+      return;
+    } else {
+      response.status(200).json({ error: "Username is avaible" });
+      return;
+    }
+  }
+
+  static async generateOTP(email) {
+    const otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+    const users = dbClient.usersCollection();
+    const result = await users.updateOne(
+      { email: email },
+      { $set: { otp: otp } }
+    );
+    return result.modifiedCount > 0 ? otp : null;
+  }
+
+  static async confirmOTP(request, response) {
+    let { email, otp } = request.body;
+    if (!email || !otp) {
+      response.status(400).json({ error: "Email and OTP are required" });
+      return;
+    }
+    const users = dbClient.usersCollection();
+    const user = await users.findOne({ email });
+    if (!user) {
+      response.status(400).json({ error: "User not found" });
+      return;
+    }
+
+    const otpData = user.otp;
+    if (!otpData || otpData !== otp) {
+      response.status(400).json({ error: "Invalid OTP" });
+      return;
+    }
+
+    await users.updateOne({ email }, { $set: { isVerified: true } });
+
+    response.status(200).json({ message: "OTP confirmed successfully" });
   }
 }
 
