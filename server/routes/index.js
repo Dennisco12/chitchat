@@ -13,5 +13,6 @@ router.get("/users/me", UsersController.getMe);
 router.post("/users/checkUsernameExists", UsersController.checkUsernameExists);
 router.post("/users/sendOTP", UsersController.sendOTP);
 router.post("/users/confirmOTP", UsersController.confirmOTP);
+router.put("/users/editProfile", UsersController.editProfile);
 
 module.exports = router;

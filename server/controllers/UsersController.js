@@ -1,4 +1,4 @@
-const ObjectID = require("mongodb").ObjectID;
+const { ObjectId } = require("mongodb");
 const dbClient = require("../engine/db_storage");
 const redisClient = require("../engine/redis");
 const otpGenerator = require("otp-generator");
@@ -12,14 +12,48 @@ class UsersController {
     const userId = await redisClient.get(key);
     if (userId) {
       const users = await dbClient.usersCollection();
-      const idObject = new ObjectID(userId);
-      users.findOne({ _id: idObject }, (err, user) => {
-        if (user) {
-          response.status(200).json({ id: userId, user: user });
+      const idObject = new ObjectId(userId);
+      const user = await users.findOne({ _id: idObject });
+      if (user) {
+        response.status(200).json({ id: userId, user: user });
+      } else {
+        response.status(401).json({ error: "User not found" });
+      }
+    } else {
+      response.status(401).json({ error: "Unauthorized" });
+    }
+  }
+
+  static async editProfile(request, response) {
+    const updates = request.body;
+    const token = request.header("X-Token");
+    const key = `auth_${token}`;
+
+    const userId = await redisClient.get(key);
+
+    if (userId) {
+      if (!updates) {
+        response.status(400).json({ error: "No items passed" });
+        return;
+      }
+      try {
+        const users = await dbClient.usersCollection();
+        const idObject = new ObjectId(userId);
+        const result = await users.updateOne(
+          { _id: idObject },
+          { $set: { profileDetails: updates } }
+        );
+
+        if (result.modifiedCount === 1) {
+          response
+            .status(200)
+            .json({ success: true, message: "Profile updated successfully" });
         } else {
-          response.status(401).json({ error: "Unauthorized" });
+          response.status(400).json({ error: "User not found" });
         }
-      });
+      } catch (error) {
+        response.status(500).json({ error: error.message });
+      }
     } else {
       response.status(401).json({ error: "Unauthorized" });
     }
