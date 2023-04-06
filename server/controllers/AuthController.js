@@ -1,8 +1,9 @@
 const sha1 = require("sha1");
-const { v4: uuidv4 } = require("uuid");
 const dbClient = require("../engine/db_storage");
 const redisClient = require("../engine/redis");
 const userQueue = require("../worker");
+const { v4: uuidv4 } = require("uuid");
+const UsersController = require("./UsersController");
 
 const AuthController = {
   async getSignup(request, response) {
@@ -43,10 +44,8 @@ const AuthController = {
       isVerified: false,
     });
     const userId = insertionInfo.insertedId.toString();
-    const token = uuidv4();
-    const key = `auth_${token}`;
-    redisClient.set(key, userId, 60 * 60 * 24);
-    response.status(201).json({ id: userId, email, token });
+
+    response.status(201).json({ id: userId, email });
     userQueue.add({ userId: userId });
     return;
   },
@@ -60,6 +59,62 @@ const AuthController = {
       response.status(204).json({});
     } else {
       response.status(401).json({ error: "Unauthorized" });
+    }
+  },
+
+  async getLogin(request, response) {
+    let { identifier } = request.body;
+    let { password } = request.body;
+
+    if (!identifier) {
+      response
+        .status(401)
+        .json({ error: "Please provide an email address or username" });
+      return;
+    }
+
+    if (!password) {
+      response.status(401).json({ error: "Please provide a password" });
+      return;
+    }
+
+    const hashedPassword = sha1(password);
+    const users = await dbClient.usersCollection();
+
+    let user;
+
+    // check if identifier is an email address
+    if (identifier.includes("@")) {
+      user = await users.findOne({
+        email: identifier,
+        password: hashedPassword,
+      });
+    } else {
+      // assume identifier is a username
+      user = await users.findOne({
+        username: identifier,
+        password: hashedPassword,
+      });
+    }
+
+    if (user) {
+      if (user.isVerified) {
+        const token = uuidv4();
+        const key = `auth_${token}`;
+        redisClient.set(key, user._id.toString(), 60 * 60 * 24);
+        response.status(200).json({ message: "Login Successful", token, user });
+        return;
+      } else {
+        UsersController.generateOTP(user.email, user.username);
+        response
+          .status(202)
+          .json({ message: "Verification otp sent to your email" });
+      }
+    } else {
+      response
+        .status(400)
+        .json({ error: "Email/Username or Password incorrect" });
+      return;
     }
   },
 };

@@ -3,6 +3,7 @@ const dbClient = require("../engine/db_storage");
 const redisClient = require("../engine/redis");
 const otpGenerator = require("otp-generator");
 const Mailer = require("../utils/mailer");
+const { v4: uuidv4 } = require("uuid");
 
 class UsersController {
   static async getMe(request, response) {
@@ -14,7 +15,7 @@ class UsersController {
       const idObject = new ObjectID(userId);
       users.findOne({ _id: idObject }, (err, user) => {
         if (user) {
-          response.status(200).json({ id: userId, email: user.email });
+          response.status(200).json({ id: userId, user: user });
         } else {
           response.status(401).json({ error: "Unauthorized" });
         }
@@ -56,7 +57,7 @@ class UsersController {
       response.status(400).json({ error: "Username already exists" });
       return;
     } else {
-      response.status(200).json({ error: "Username is avaible" });
+      response.status(200).json({ message: "Username is avaible" });
       return;
     }
   }
@@ -86,13 +87,24 @@ class UsersController {
       return;
     }
 
-    const opt = this.generateOTP(email, username);
-    if (!opt) {
-      response.status(400).json({ error: "User not found" });
+    const otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+    const users = await dbClient.usersCollection();
+    const result = await users.updateOne(
+      { email: email },
+      { $set: { otp: otp } }
+    );
+    if (result.modifiedCount > 0) {
+      Mailer.sendOpt(email, username, otp);
+      response.status(200).json({ message: "Otp sent!" });
+
       return;
     } else {
-      response.status(200).json({ error: "Otp sent!" });
-      return;
+      response.status(400).json({ error: "User not found" });
+
+      return null;
     }
   }
 
@@ -117,7 +129,13 @@ class UsersController {
 
     await users.updateOne({ email }, { $set: { isVerified: true } });
 
-    response.status(200).json({ message: "OTP confirmed successfully" });
+    const token = uuidv4();
+    const key = `auth_${token}`;
+    redisClient.set(key, user._id.toString(), 60 * 60 * 24);
+
+    response
+      .status(200)
+      .json({ message: "OTP confirmed successfully", token, email });
   }
 }
 
