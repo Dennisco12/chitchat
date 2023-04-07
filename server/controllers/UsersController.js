@@ -16,7 +16,7 @@ class UsersController {
       const idObject = new ObjectId(userId);
       const user = await users.findOne({ _id: idObject });
       if (user) {
-        response.status(200).json({ id: userId, user: user });
+        response.status(201).json({ id: userId, user: user });
       } else {
         response.status(401).json({ error: "User not found" });
       }
@@ -47,7 +47,7 @@ class UsersController {
 
         if (result.modifiedCount === 1) {
           response
-            .status(200)
+            .status(201)
             .json({ success: true, message: "Profile updated successfully" });
         } else {
           response.status(400).json({ error: "User not found" });
@@ -92,7 +92,7 @@ class UsersController {
       response.status(400).json({ error: "Username already exists" });
       return;
     } else {
-      response.status(200).json({ message: "Username is avaible" });
+      response.status(201).json({ message: "Username is avaible" });
       return;
     }
   }
@@ -115,7 +115,7 @@ class UsersController {
     );
     if (result.modifiedCount > 0) {
       Mailer.sendOpt(email, username, otp);
-      response.status(200).json({ message: "Otp sent!" });
+      response.status(201).json({ message: "Otp sent!" });
 
       return;
     } else {
@@ -154,10 +154,31 @@ class UsersController {
     redisClient.set(key, user._id.toString(), 60 * 60 * 24);
 
     response
-      .status(200)
+      .status(201)
       .json({ message: "OTP confirmed successfully", token, email });
     userQueue.add({ userId: user._id, type: "welcome" });
     return;
+  }
+  static async getFriends(request, response) {
+    const token = request.header("X-Token");
+    const key = `auth_${token}`;
+    const userId = await redisClient.get(key);
+    if (userId) {
+      const users = await dbClient.usersCollection();
+      const idObject = new ObjectId(userId);
+      const user = await users.findOne({ _id: idObject });
+      if (user) {
+        const friendIds = user.friendlist || [];
+        const friends = await users
+          .find({ _id: { $in: friendIds.map((id) => ObjectId(id)) } })
+          .toArray();
+        response.status(201).json({ friends });
+      } else {
+        response.status(401).json({ error: "User not found" });
+      }
+    } else {
+      response.status(401).json({ error: "Unauthorized" });
+    }
   }
 }
 
