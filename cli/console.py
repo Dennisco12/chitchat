@@ -97,7 +97,7 @@ class ChitChatCommand(cmd.Cmd):
         identifier = input("Enter your username or email: ")
         password = input("Enter your password: ")
         url = self.baseurl + '/login'
-        res = requests.post(url, data={"identifier": identifier, "password": password})
+        res = requests.post(url, data={"identifier": identifier.lower(), "password": password})
         if res.status_code != 201 and res.status_code != 202:
             print("An error has occured with code: {} \n {}".format(res.status_code, res.text))
             return False
@@ -120,7 +120,10 @@ class ChitChatCommand(cmd.Cmd):
             else:
                 print('Your account has been verified succesfully')
         else:
-            print("Welcome back {}".format(res.text))
+            self._id = res.json().get('user').get('_id')
+            self.token = res.json().get('token')
+            self.username = res.json().get('user').get('username')
+            print("\n Welcome back {}".format(self.username))
 
 
 
