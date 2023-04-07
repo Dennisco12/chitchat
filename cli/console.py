@@ -2,7 +2,7 @@
 """Module containing the entry point of the command interpreter."""
 import cmd
 import sys
-import event
+#import event
 import requests
 
 
@@ -11,7 +11,7 @@ class ChitChatCommand(cmd.Cmd):
     of this project."""
 
     prompt = '(chitchat) '
-    baseurl = 'https://4dbc-102-88-63-181.eu.ngrok.io'
+    baseurl = 'https://1ccd-102-88-62-5.eu.ngrok.io'
 
     def precmd(self, line):
         """Runs some actions before a line of command is executed.
@@ -77,19 +77,51 @@ class ChitChatCommand(cmd.Cmd):
             print('Your account has been created succesfully')
             otp = input('Enter the OTP sent to your email: ')
             url = self.baseurl + '/users/confirmOTP'
-            res = requests.post(url, data={"otp": otp, "email": email})
+            res = requests.post(url, data={"otp": otp, "identifier": email})
             if res.status_code == 201:
                 print("...Verification succesful...")
                 token = res.text
             else:
                 otp = input("Verification failed, you have one attempt left: ")
-                res = requests.post(url, data={"otp": otp, "email": email})
+                res = requests.post(url, data={"otp": otp, "identifier": email})
                 if res.status_code == 201:
                     print("...Verification succesful...")
                     token = res.text
                 else:
                     print("...Verification failed...")
         return False
+
+    def do_login(self, line):
+        """This takes in username or email and password and 
+        creates a session for the user"""
+        identifier = input("Enter your username or email: ")
+        password = input("Enter your password: ")
+        url = self.baseurl + '/login'
+        res = requests.post(url, data={"identifier": identifier, "password": password})
+        if res.status_code != 201 and res.status_code != 202:
+            print("An error has occured with code: {} \n {}".format(res.status_code, res.text))
+            return False
+        elif res.status_code == 202:
+            print("Welcome back {}, Let's get you verified".format(res.text))
+            otp = input("Please enter the OTP sent to your email: ")
+            url = f'{self.baseurl}/users/confirmOTP'
+            data = {"identifier": identifier, "otp": otp}
+            response = requests.post(url, data=data)
+            if response.status_code != 201:
+                otp = input("Verification failed, you have one more attempt...")
+                data = {"identifier": identifier, "otp": otp}
+                response = requests.post(url, data=data)
+                if response.status_code != 201:
+                    print("Verification failed")
+                    return False
+                else:
+                    print("Your account has been verified successfully, response: {}".format(response.text))
+                
+            else:
+                print('Your account has been verified succesfully')
+        else:
+            print("Welcome back {}".format(res.text))
+
 
 
 if __name__ == '__main__':
