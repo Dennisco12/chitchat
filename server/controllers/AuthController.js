@@ -11,17 +11,17 @@ const AuthController = {
     let { password } = request.body;
     let { username } = request.body;
     if (!email) {
-      response.status(401).json({ error: "Please provide an email address" });
+      response.status(400).json({ error: "Please provide an email address" });
       return;
     }
 
     if (!password) {
-      response.status(401).json({ error: "Please provide a password" });
+      response.status(400).json({ error: "Please provide a password" });
       return;
     }
 
     if (!username) {
-      response.status(401).json({ error: "Please provide a username" });
+      response.status(400).json({ error: "Please provide a username" });
       return;
     }
 
@@ -102,7 +102,7 @@ const AuthController = {
         const token = uuidv4();
         const key = `auth_${token}`;
         redisClient.set(key, user._id.toString(), 60 * 60 * 24);
-        response.status(200).json({ message: "Login Successful", token, user });
+        response.status(201).json({ message: "Login Successful", token, user });
         return;
       } else {
         Functions.generateOTP(user.email, user.username, "sendOtp");
@@ -196,7 +196,7 @@ const AuthController = {
       );
     }
     await redisClient.del(user._id);
-    response.status(200).json({ message: "Password updated successfully" });
+    response.status(201).json({ message: "Password updated successfully" });
   },
 };
 

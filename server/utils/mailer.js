@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const Mail = require("nodemailer/lib/mailer");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -125,21 +126,21 @@ const HTMLTemp = {
           style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; border-collapse: collapse; background-color: #f5f5f5;"
         >
           <tr>
-            <td style="text-align: center;">
-              <img
-                src="https://example.com/chitchat-logo.png"
-                alt="ChitChat Logo"
-                style="width: 150px;"
-              />
-            </td>
-          </tr>
-          <tr>
             <td
               style="text-align: center; padding: 20px; background-color: #ffffff; border-radius: 10px;"
             >
-              <h1 style="font-size: 32px; margin-bottom: 20px;">
-                Welcome to ChitChat!
-              </h1>
+            <div
+                style="
+                  background-color: #fc6c85;
+                  color: #ffffff;
+                  font-size: 28px;
+                  font-weight: bold;
+                  text-align: center;
+                  padding: 40px;
+                "
+              >
+                Welcome to ChitChat
+              </div>
               <p style="font-size: 18px; line-height: 1.5;">
                 Hi ${username},<br />
                 We're thrilled to have you join us here at ChitChat! You're now part
@@ -301,7 +302,7 @@ const Mailer = {
         address: "chitchatcli@gmail.com",
       },
       to,
-      subject: "Chit Chat Otp Verification",
+      subject: "Reset ChitChat Password",
       html: HTMLTemp.resetpassword(otp, username),
     };
 
@@ -322,7 +323,7 @@ const Mailer = {
         address: "chitchatcli@gmail.com",
       },
       to,
-      subject: "Chit Chat Otp Verification",
+      subject: "Welcome to ChitChat",
       html: HTMLTemp.welcome(username),
     };
 
