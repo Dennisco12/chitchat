@@ -3,6 +3,7 @@ const router = express.Router();
 
 const AuthController = require("../controllers/AuthController");
 const UsersController = require("../controllers/UsersController");
+
 router.get("/", (req, res) => {
   res.status(201).send("Hi there");
 });

@@ -7,6 +7,7 @@ const Functions = require("../utils/functions");
 
 const AuthController = {
   async getSignup(request, response) {
+    console.log("request", request);
     let { email } = request.body;
     let { password } = request.body;
     let { username } = request.body;

@@ -5,6 +5,7 @@ import sys
 import event
 import requests
 
+
 class ChitChatCommand(cmd.Cmd):
     """This class represents the command interpreter
     of this project."""
@@ -66,13 +67,12 @@ class ChitChatCommand(cmd.Cmd):
         username = input("Please enter your username: ")
         password = input("Please enter your password: ")
         url = 'https://4dbc-102-88-63-181.eu.ngrok.io/signup'
-
-        print()
-        print("Creating an account with email: {}, username: {} and password: {}".format(email, username, password))
         data = {"email": email, "username": username, "password": password}
         response = requests.post(url, data=data)
         if response.status_code != 201:
-            print("The server responded with code:", response.status_code, "\n", response.text)
+            print("An error has occurred with code:",
+                  response.status_code, "\n", response.text)
+            print(dir(response.text))
         else:
             print('Your account has been created succesfully')
         return False
