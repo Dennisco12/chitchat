@@ -1,14 +1,43 @@
-class DBStorage {
-  constructor(con) {
-    this.con = con;
+const { MongoClient } = require("mongodb");
+
+class DBClient {
+  constructor() {
+    const host = process.env.DB_HOST || "localhost";
+    const port = process.env.DB_PORT || 27017;
+    const database = process.env.DB_DATABASE || "chit_chat";
+    const uri = `mongodb://${host}:${port}/${database}`;
+    this.client = new MongoClient(uri, {
+      useUnifiedTopology: true,
+    });
+
+    this.client
+      .connect()
+      .then(() => {
+        this.db = this.client.db(`${database}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
-  query(sql) {
-    this.con.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log("Result: " + result);
-    });
+  async isAlive() {
+    return this.client.isConnected();
+  }
+
+  async nbUsers() {
+    try {
+      const users = this.usersCollection();
+      const count = await users.countDocuments();
+      return count;
+    } catch (error) {
+      return -1;
+    }
+  }
+
+  async usersCollection() {
+    return this.client.db().collection("users");
   }
 }
 
-module.exports = DBStorage;
+const dbClient = new DBClient();
+module.exports = dbClient;
