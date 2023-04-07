@@ -11,6 +11,7 @@ class ChitChatCommand(cmd.Cmd):
     of this project."""
 
     prompt = '(chitchat) '
+    baseurl = 'https://4dbc-102-88-63-181.eu.ngrok.io'
 
     def precmd(self, line):
         """Runs some actions before a line of command is executed.
@@ -66,7 +67,7 @@ class ChitChatCommand(cmd.Cmd):
             email = input("Please enter your email: ")
         username = input("Please enter your username: ")
         password = input("Please enter your password: ")
-        url = 'https://4dbc-102-88-63-181.eu.ngrok.io/signup'
+        url = f'{self.baseurl}/signup'
         data = {"email": email, "username": username, "password": password}
         response = requests.post(url, data=data)
         if response.status_code != 201:
