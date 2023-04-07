@@ -10,9 +10,8 @@ userQueue.process(async (job, done) => {
   const { userId, type } = job.data;
 
   if (!userId) done(new Error("Missing userId"));
-  const users = await dbClient.usersCollection();
   const idObject = new ObjectId(userId);
-  const user = await users.findOne({ _id: idObject });
+  const user = await Functions.searchUser({ _id: idObject });
   if (user) {
     console.log(`Welcome ${user.email}!`);
     console.log(`Sending otp to ${user.email}!`);

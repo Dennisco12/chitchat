@@ -5,6 +5,7 @@ const otpGenerator = require("otp-generator");
 const Mailer = require("../utils/mailer");
 const { v4: uuidv4 } = require("uuid");
 const userQueue = require("../worker");
+const Functions = require("../utils/functions");
 
 class UsersController {
   static async getMe(request, response) {
@@ -12,9 +13,8 @@ class UsersController {
     const key = `auth_${token}`;
     const userId = await redisClient.get(key);
     if (userId) {
-      const users = await dbClient.usersCollection();
       const idObject = new ObjectId(userId);
-      const user = await users.findOne({ _id: idObject });
+      const user = await Functions.searchUser({ _id: idObject });
       if (user) {
         response.status(201).json({ id: userId, user: user });
       } else {
@@ -86,8 +86,7 @@ class UsersController {
   static async checkUsernameExists(request, response) {
     let { username } = request.body;
 
-    const users = await dbClient.usersCollection();
-    const existingUser = await users.findOne({ username });
+    const existingUser = await Functions.searchUser({ username });
     if (existingUser) {
       response.status(400).json({ error: "Username already exists" });
       return;
@@ -126,13 +125,24 @@ class UsersController {
   }
 
   static async confirmOTP(request, response) {
-    let { email, otp } = request.body;
-    if (!email || !otp) {
-      response.status(400).json({ error: "Email and OTP are required" });
+    let { identifier, otp } = request.body;
+    if (!identifier || !otp) {
+      response
+        .status(400)
+        .json({ error: "Email/Username and OTP are required" });
       return;
     }
     const users = await dbClient.usersCollection();
-    const user = await users.findOne({ email });
+    let user;
+    if (identifier.includes("@")) {
+      user = await Functions.searchUser({ email: identifier });
+    } else {
+      // assume identifier is a username
+      user = await Functions.searchUser({
+        username: identifier,
+      });
+    }
+
     if (!user) {
       response.status(400).json({ error: "User not found" });
       return;
@@ -144,10 +154,17 @@ class UsersController {
       return;
     }
 
-    await users.updateOne(
-      { email },
-      { $set: { isVerified: true }, $unset: { otp: "" } }
-    );
+    if (identifier.includes("@")) {
+      await users.updateOne(
+        { email: identifier },
+        { $set: { isVerified: true }, $unset: { otp: "" } }
+      );
+    } else {
+      await users.updateOne(
+        { username: identifier },
+        { $set: { isVerified: true }, $unset: { otp: "" } }
+      );
+    }
 
     const token = uuidv4();
     const key = `auth_${token}`;
@@ -155,7 +172,7 @@ class UsersController {
 
     response
       .status(201)
-      .json({ message: "OTP confirmed successfully", token, email });
+      .json({ message: "OTP confirmed successfully", token, user });
     userQueue.add({ userId: user._id, type: "welcome" });
     return;
   }
@@ -166,7 +183,7 @@ class UsersController {
     if (userId) {
       const users = await dbClient.usersCollection();
       const idObject = new ObjectId(userId);
-      const user = await users.findOne({ _id: idObject });
+      const user = await Functions.searchUser({ _id: idObject });
       if (user) {
         const friendIds = user.friendlist || [];
         const friends = await users
