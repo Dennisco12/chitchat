@@ -76,7 +76,7 @@ class ChitChatCommand(cmd.Cmd):
         else:
             print('Your account has been created succesfully')
             otp = input('Enter the OTP sent to your email: ')
-            utl = self.baseurl + '/users/confirmOTP'
+            url = self.baseurl + '/users/confirmOTP'
             res = requests.post(url, data={"otp": otp, "email": email})
             if res.status_code == 201:
                 print("...Verification succesful...")
