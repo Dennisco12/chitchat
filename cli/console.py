@@ -2,7 +2,7 @@
 """Module containing the entry point of the command interpreter."""
 import cmd
 import sys
-from cli import event
+import event
 import requests
 
 class ChitChatCommand(cmd.Cmd):
@@ -56,7 +56,7 @@ class ChitChatCommand(cmd.Cmd):
         """Echo command"""
         print(line)
 
-    def do_signup(self):
+    def do_signup(self, line):
         """This creates a user in the database
         return the user id and token"""
         email = input("Please enter your email: ")
@@ -65,15 +65,17 @@ class ChitChatCommand(cmd.Cmd):
             email = input("Please enter your email: ")
         username = input("Please enter your username: ")
         password = input("Please enter your password: ")
-        url = 'http://localhost:3000/signup'
+        url = 'https://4dbc-102-88-63-181.eu.ngrok.io'
         data = {"email": email, "username": username, "password": password}
-        response = request.post(url, data)
+        response = requests.post(url, data)
         if response.status_code != 201:
-            print("An error has occurred:", response.to_json().error)
-        print('Your account has been created succesfully')
+            print("An error has occurred with code:", response.status_code, "\n", response.text)
+            print(dir(response.text))
+        else:
+            print('Your account has been created succesfully')
         return False
 
 
 if __name__ == '__main__':
-    event.connectToSocket()
+    # event.connectToSocket()
     ChitChatCommand().cmdloop()
