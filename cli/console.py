@@ -73,9 +73,22 @@ class ChitChatCommand(cmd.Cmd):
         if response.status_code != 201:
             print("An error has occurred with code:",
                   response.status_code, "\n", response.text)
-            print(dir(response.text))
         else:
             print('Your account has been created succesfully')
+            otp = input('Enter the OTP sent to your email: ')
+            utl = self.baseurl + '/users/confirmOTP'
+            res = requests.post(url, data={"otp": otp, "email": email})
+            if res.status_code == 201:
+                print("...Verification succesful...")
+                token = res.text
+            else:
+                otp = input("Verification failed, you have one attempt left: ")
+                res = requests.post(url, data={"otp": otp, "email": email})
+                if res.status_code == 201:
+                    print("...Verification succesful...")
+                    token = res.text
+                else:
+                    print("...Verification failed...")
         return False
 
 
