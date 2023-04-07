@@ -27,12 +27,12 @@ const AuthController = {
     }
 
     const users = await dbClient.usersCollection();
-    const existingUser = await Functions.search({ username });
+    const existingUser = await Functions.searchUser({ username });
     if (existingUser) {
       response.status(400).json({ error: "Username already exists" });
       return;
     }
-    const user = await Functions.search({ email });
+    const user = await Functions.searchUser({ email });
     if (user) {
       response.status(400).json({ error: "Already exist" });
       return;
@@ -84,13 +84,13 @@ const AuthController = {
 
     // check if identifier is an email address
     if (identifier.includes("@")) {
-      user = await Functions.search({
+      user = await Functions.searchUser({
         email: identifier,
         password: hashedPassword,
       });
     } else {
       // assume identifier is a username
-      user = await Functions.search({
+      user = await Functions.searchUser({
         username: identifier,
         password: hashedPassword,
       });
@@ -128,12 +128,12 @@ const AuthController = {
     let user;
 
     if (identifier.includes("@")) {
-      user = await Functions.search({
+      user = await Functions.searchUser({
         email: identifier,
       });
     } else {
       // assume identifier is a username
-      user = await Functions.search({
+      user = await Functions.searchUser({
         username: identifier,
       });
     }
@@ -162,12 +162,12 @@ const AuthController = {
     let user;
 
     if (identifier.includes("@")) {
-      user = await Functions.search({
+      user = await Functions.searchUser({
         email: identifier,
       });
     } else {
       // assume identifier is a username
-      user = await Functions.search({
+      user = await Functions.searchUser({
         username: identifier,
       });
     }

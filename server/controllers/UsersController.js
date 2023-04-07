@@ -14,7 +14,7 @@ class UsersController {
     const userId = await redisClient.get(key);
     if (userId) {
       const idObject = new ObjectId(userId);
-      const user = await Functions.search({ _id: idObject });
+      const user = await Functions.searchUser({ _id: idObject });
       if (user) {
         response.status(201).json({ id: userId, user: user });
       } else {
@@ -86,7 +86,7 @@ class UsersController {
   static async checkUsernameExists(request, response) {
     let { username } = request.body;
 
-    const existingUser = await Functions.search({ username });
+    const existingUser = await Functions.searchUser({ username });
     if (existingUser) {
       response.status(400).json({ error: "Username already exists" });
       return;
@@ -183,7 +183,7 @@ class UsersController {
     if (userId) {
       const users = await dbClient.usersCollection();
       const idObject = new ObjectId(userId);
-      const user = await Functions.search({ _id: idObject });
+      const user = await Functions.searchUser({ _id: idObject });
       if (user) {
         const friendIds = user.friendlist || [];
         const friends = await users
