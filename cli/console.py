@@ -2,8 +2,8 @@
 """Module containing the entry point of the command interpreter."""
 import cmd
 import sys
-import event
-
+from cli import event
+import requests
 
 class ChitChatCommand(cmd.Cmd):
     """This class represents the command interpreter
@@ -18,6 +18,7 @@ class ChitChatCommand(cmd.Cmd):
         Returns:
             str: The next line of command to execute.
         """
+        message = 'Welcome to ChitChat, enter "help" to see the list of available commands'
         return line
 
     def postcmd(self, stop, line):
@@ -54,6 +55,23 @@ class ChitChatCommand(cmd.Cmd):
     def do_echo(self, line):
         """Echo command"""
         print(line)
+
+    def do_signup(self):
+        """This creates a user in the database
+        return the user id and token"""
+        email = input("Please enter your email: ")
+        while len(email) == 0:
+            print("* Email field cannot be empty, please try again *")
+            email = input("Please enter your email: ")
+        username = input("Please enter your username: ")
+        password = input("Please enter your password: ")
+        url = 'http://localhost:3000/signup'
+        data = {"email": email, "username": username, "password": password}
+        response = request.post(url, data)
+        if response.status_code != 201:
+            print("An error has occurred:", response.to_json().error)
+        print('Your account has been created succesfully')
+        return False
 
 
 if __name__ == '__main__':
