@@ -29,6 +29,11 @@ const Functions = {
       return null;
     }
   },
+
+  async searchUser(param) {
+    const users = await dbClient.usersCollection();
+    return await users.findOne(param);
+  },
 };
 
 module.exports = Functions;

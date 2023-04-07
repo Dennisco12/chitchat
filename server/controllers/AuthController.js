@@ -27,12 +27,12 @@ const AuthController = {
     }
 
     const users = await dbClient.usersCollection();
-    const existingUser = await users.findOne({ username });
+    const existingUser = await Functions.search({ username });
     if (existingUser) {
       response.status(400).json({ error: "Username already exists" });
       return;
     }
-    const user = await users.findOne({ email });
+    const user = await Functions.search({ email });
     if (user) {
       response.status(400).json({ error: "Already exist" });
       return;
@@ -80,19 +80,17 @@ const AuthController = {
     }
 
     const hashedPassword = sha1(password);
-    const users = await dbClient.usersCollection();
-
     let user;
 
     // check if identifier is an email address
     if (identifier.includes("@")) {
-      user = await users.findOne({
+      user = await Functions.search({
         email: identifier,
         password: hashedPassword,
       });
     } else {
       // assume identifier is a username
-      user = await users.findOne({
+      user = await Functions.search({
         username: identifier,
         password: hashedPassword,
       });
@@ -127,16 +125,15 @@ const AuthController = {
         .json({ error: "Please provide an email address or username" });
       return;
     }
-    const users = await dbClient.usersCollection();
     let user;
 
     if (identifier.includes("@")) {
-      user = await users.findOne({
+      user = await Functions.search({
         email: identifier,
       });
     } else {
       // assume identifier is a username
-      user = await users.findOne({
+      user = await Functions.search({
         username: identifier,
       });
     }
@@ -165,12 +162,12 @@ const AuthController = {
     let user;
 
     if (identifier.includes("@")) {
-      user = await users.findOne({
+      user = await Functions.search({
         email: identifier,
       });
     } else {
       // assume identifier is a username
-      user = await users.findOne({
+      user = await Functions.search({
         username: identifier,
       });
     }
