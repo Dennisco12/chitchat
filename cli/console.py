@@ -86,7 +86,8 @@ class ChitChatCommand(cmd.Cmd):
                 res = requests.post(url, data={"otp": otp, "identifier": email})
                 if res.status_code == 201:
                     print("...Verification succesful...")
-                    token = res.text
+                    token = res.json().get('user').get('token')
+                    self.prompt = "({}) ".format(username)
                 else:
                     print("...Verification failed...")
         return False
@@ -124,6 +125,11 @@ class ChitChatCommand(cmd.Cmd):
             self.token = res.json().get('token')
             self.username = res.json().get('user').get('username')
             print("\n Welcome back {}".format(self.username))
+
+        self._id = res.json().get('user').get('_id')
+        self.token = res.json().get('token')
+        self.username = res.json().get('user').get('username')
+        self.prompt = "({}) ".format(self.username)
 
 
 
