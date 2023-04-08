@@ -47,17 +47,32 @@ const MessageController = {
       }
       const chatroom = await getChatroom(id, recepientDetails._id.toString());
       console.log("chatroom", chatroom);
-      response
-        .status(201)
-        .json({
-          chatroomId: chatroom._id,
-          messages: chatroom.messages,
-          recepientID: recepientDetails._id.toString(),
-        });
+      response.status(201).json({
+        chatroomID: chatroom._id,
+        messages: chatroom.messages,
+        recepientID: recepientDetails._id.toString(),
+      });
     } else {
       response.status(401).json({ error: "Unauthorized" });
       return;
     }
+  },
+
+  async appendMessage(chatroomID, messageData) {
+    const chatrooms = await dbClient.chatroomsCollection();
+
+    const message = {
+      createdAt: new Date(),
+      senderID: new ObjectId(messageData.senderID),
+      message: messageData.message,
+      recepientID: messageData.recepientID,
+    };
+    const result = await chatrooms.findOneAndUpdate(
+      { _id: new ObjectId(chatroomID) },
+      { $push: { messages: message } },
+      { returnOriginal: false }
+    );
+    return result.value;
   },
 };
 

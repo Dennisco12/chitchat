@@ -1,3 +1,4 @@
+const MessageController = require("../controllers/MessageController");
 const redisClient = require("../engine/redis");
 
 module.exports = function (io) {
@@ -8,7 +9,7 @@ module.exports = function (io) {
     }
     const key = `auth_${token}`;
     const userId = await redisClient.get(key);
-    socket.userId = userId;
+    socket.userID = userId;
     const newkey = `socket_${userId}`;
     redisClient.set(newkey, socket.id);
     next();
@@ -17,11 +18,11 @@ module.exports = function (io) {
   io.use(checkToken);
 
   io.on("connection", (socket) => {
-    console.log(`User ${socket.id} userId: ${socket.userId} connected`);
+    console.log(`User ${socket.id} userId: ${socket.userID} connected`);
 
     socket.on("new-message", async (data) => {
-      const { message, receiver } = data;
-      const recipientSocket = await redisClient.get(`socket_${receiver}`);
+      const { message, chatroomID, recepientID } = data;
+      const recipientSocket = await redisClient.get(`socket_${recepientID}`);
       if (recipientSocket) {
         console.log(
           "message",
@@ -29,12 +30,20 @@ module.exports = function (io) {
           "recipientSocket",
           recipientSocket,
           "sendID",
-          socket.userId
+          socket.userID
         );
         io.to(recipientSocket).emit("new-message", {
           message,
-          sender: socket.userId,
+          senderID: socket.userID,
+          recepientID: recepientID,
+          createdAt: new Date(),
         });
+        const messageData = {
+          senderID: socket.userID,
+          message: message,
+          recepientID: recepientID,
+        };
+        MessageController.appendMessage(chatroomID, messageData);
       }
     });
 
