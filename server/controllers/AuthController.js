@@ -106,7 +106,7 @@ const AuthController = {
       } else {
         Functions.generateOTP(user.email, user.username, "sendOtp");
         response
-          .status(202)
+          .status(205)
           .json({ message: "Verification otp sent to your email" });
       }
     } else {
