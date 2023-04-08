@@ -8,6 +8,56 @@ const userQueue = require("../worker");
 const Functions = require("../utils/functions");
 
 class UsersController {
+  static async searchUsers(request, response) {
+    const token = request.header("X-Token");
+    const key = `auth_${token}`;
+    const id = await redisClient.get(key);
+    if (id) {
+      const { term } = request.params;
+      console.log("Searching for", term);
+      if (!term) {
+        return response.status(400).json({ error: "Search term is required" });
+      }
+      const users = await dbClient.usersCollection();
+
+      const query = {
+        profileDetails: { $exists: true, $ne: {} },
+        $or: [
+          { username: { $regex: term, $options: "i" } },
+          { email: { $regex: term, $options: "i" } },
+          {
+            "profileDetails.firstName": { $regex: term, $options: "i" },
+          },
+          {
+            "profileDetails.lastName": { $regex: term, $options: "i" },
+          },
+          {
+            "profileDetails.bio": { $regex: term, $options: "i" },
+          },
+          {
+            "profileDetails.techStack": { $regex: term, $options: "i" },
+          },
+          {
+            "profileDetails.level": { $regex: term, $options: "i" },
+          },
+        ],
+      };
+      try {
+        const results = await users.find(query).toArray();
+        console.log("results", results);
+        const usersFound = results.map(
+          ({ password, otp, isVerified, ...rest }) => rest
+        );
+        response.status(200).json(usersFound);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error" });
+      }
+    } else {
+      response.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+  }
   static async getMe(request, response) {
     const token = request.header("X-Token");
     const key = `auth_${token}`;
@@ -40,9 +90,11 @@ class UsersController {
       try {
         const users = await dbClient.usersCollection();
         const idObject = new ObjectId(userId);
+        const user = await users.findOne({ _id: idObject });
+        const profileDetails = user?.profileDetails ?? {};
         const result = await users.updateOne(
           { _id: idObject },
-          { $set: { profileDetails: updates } }
+          { $set: { profileDetails: { ...profileDetails, ...updates } } }
         );
 
         if (result.modifiedCount === 1) {
