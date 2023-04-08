@@ -46,7 +46,6 @@ const MessageController = {
         return;
       }
       const chatroom = await getChatroom(id, recepientDetails._id.toString());
-      console.log("chatroom", chatroom);
       response.status(201).json({
         chatroomID: chatroom._id,
         messages: chatroom.messages,
@@ -66,6 +65,7 @@ const MessageController = {
       senderID: new ObjectId(messageData.senderID),
       message: messageData.message,
       recepientID: messageData.recepientID,
+      senderusername: messageData.senderusername,
     };
     const result = await chatrooms.findOneAndUpdate(
       { _id: new ObjectId(chatroomID) },

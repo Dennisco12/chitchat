@@ -46,11 +46,9 @@ class RedisClient {
   }
 
   async delSocketValue(value) {
-    console.log("Value to delete", value);
     for await (const key of this.client.scanIterator()) {
       if (key.startsWith("socket_")) {
         const val = await this.get(key);
-        console.log("Keys", key, "VAl", val);
         if (val === value) {
           await this.del(key);
           return val;
