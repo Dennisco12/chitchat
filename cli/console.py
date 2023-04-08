@@ -1,9 +1,10 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """Module containing the entry point of the command interpreter."""
 import cmd
 import sys
-# import event
+from cli import event
 import requests
+from colorama import Fore, Back, Style
 
 
 class ChitChatCommand(cmd.Cmd):
@@ -11,7 +12,7 @@ class ChitChatCommand(cmd.Cmd):
     of this project."""
 
     prompt = '(chitchat) '
-    baseurl = 'https://1ccd-102-88-62-5.eu.ngrok.io'
+    baseurl = 'https://fb1a-102-88-63-48.ngrok-free.app'
 
     def precmd(self, line):
         """Runs some actions before a line of command is executed.
@@ -87,7 +88,7 @@ class ChitChatCommand(cmd.Cmd):
                     url, data={"otp": otp, "identifier": email})
                 if res.status_code == 201:
                     print("...Verification succesful...")
-                    token = res.json().get('user').get('token')
+                    token = user.get('token')
                     self.prompt = "({}) ".format(username)
                 else:
                     print("...Verification failed...")
@@ -96,8 +97,8 @@ class ChitChatCommand(cmd.Cmd):
     def do_login(self, line):
         """This takes in username or email and password and 
         creates a session for the user"""
-        identifier = input("Enter your username or email: ")
-        password = input("Enter your password: ")
+        identifier = input(Fore.BLUE + "Enter your username or email: " + Style.RESET_ALL)
+        password = input(Fore.BLUE + "Enter your password: " + Style.RESET_ALL)
         url = self.baseurl + '/login'
         res = requests.post(
             url, data={"identifier": identifier.lower(), "password": password})
@@ -106,7 +107,7 @@ class ChitChatCommand(cmd.Cmd):
                 res.status_code, res.text))
             return False
         elif res.status_code == 205:
-            print("Welcome back {}, Let's get you verified".format(res.text))
+            print("Welcome back {}, Let's get you verified".format(res.json().get('user').get('username')))
             otp = input("Please enter the OTP sent to your email: ")
             url = f'{self.baseurl}/users/confirmOTP'
             data = {"identifier": identifier, "otp": otp}
@@ -138,24 +139,91 @@ class ChitChatCommand(cmd.Cmd):
 
     def do_updateMe(self, line):
         """This updates the current user profile"""
+        try:
+            self.prompt = '({}) '.format(self.username)
+        except Exception:
+            pass
+        url = self.baseurl + '/users/me'
+        res = requests.get(url, headers={'X-Token': self.token})
+        if res.status_code != 201:
+            print("User not found, Please sign-in to continue")
+            return False
+        self.prompt = "({}) ".format(res.json().get('user').get('username'))
+
+        user = res.json().get('user').get('profileDetails')
         
+        print("First name: {}".format(user.get('firstName')))
+        firstname = input("Enter a new value or press enter to leave it unchanged: ")
+        print("Last name: {}".format(user.get('lastName')))
+        lastname = input("Enter a new value or press enter to leave it unchanged: ")
+        print("Bio: {}".format(user.get('bio')))
+        bio = input("Enter a new value or press enter to leave it unchanged: ")
+        print('Level: {}'.format(user.get('level')))
+        level = input("Enter a new value or press enter to leave it unchanged: ")
+        print("Tech stack: {}".format(user.get('techStack')))
+        techstack = input("Enter a new value or press enter to leave it unchanged: ")
+
+        newDict = {}
+        if len(firstname) != 0:
+            newDict['firstName'] = firstname
+        if len(lastname) != 0:
+            newDict['lastName'] = lastname
+        if len(bio) != 0:
+            newDict['bio'] = bio
+        if len(level) != 0:
+            newDict['level'] = level
+        if len(techstack) != 0:
+            newDict['techStack'] = techstack
+
+        url = self.baseurl + '/users/editProfile'
+
+        res = requests.put(url, data=newDict, headers={"X-Token": self.token})
+        if res.status_code != 201:
+            print("An error has occured with code: {}. \nError message: {}".format(res.status_code, res.text))
+            return False
+        else:
+            print("Your details have been updated successfully")
+        return False
 
     def do_startchat(self, line):
-        """This starts the chat interface"""
+        """This starts the chat with user
+        Usage: startchat <username>"""
         if not line:
             print("* Please include the user you want to chat with. *")
             return False
-        username = line.split()[0]
+        recepient = line.split()[0]
         if not self.username:
             print("Please log in to continue")
             return False
-        url = self.baseurl + '/startChat/' + username
-        header = {"X-Token": self.token}
-        res = requests(url, headers=header)
-        self.chatroomID = res.json().get('chatroomID')
-        self.recepientID = res.json().get('recepientID')
-        self.messages = res.json().get('messages')
+        url = self.baseurl + '/startChat/' + recepient
+        res = requests.get(url, headers={'X-Token': self.token})
+        # for key, val in res.json().items():
+        #     print("{}: {}".format(key, val))
+        chatroomID = res.json().get('chatroomID')
+        recepientID = res.json().get('recepientID')
+        messages = res.json().get('messages')
 
+        event.connectToSocket(self.token)
+        event.sendMessage(messages, chatroomID, recepientID)
+
+    def do_show(self, line):
+        """This display the current user profle"""
+        if not line:
+            return False
+        command = line.split()[0]
+        if command == 'me':
+            url = self.baseurl + '/users/me'
+            resp = requests.get(url, headers={'X-Token': self.token})
+            if resp.status_code != 201:
+                print("No user found")
+                return False
+            
+            user = resp.json().get('user').get('profileDetails')
+            for key, val in user.items():
+                print("{} --> {}".format(key, val))
+        else:
+            print("Usage: show me")
+            return False
 
 if __name__ == '__main__':
     # event.connectToSocket()
