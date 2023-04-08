@@ -131,6 +131,26 @@ class ChitChatCommand(cmd.Cmd):
         self.username = res.json().get('user').get('username')
         self.prompt = "({}) ".format(self.username)
 
+    def do_updateMe(self, line):
+        """This updates the current user profile"""
+        
+
+    def do_startchat(self, line):
+        """This starts the chat interface"""
+        if not line:
+            print("* Please include the user you want to chat with. *")
+            return False
+        username = line.split()[0]
+        if not self.username:
+            print("Please log in to continue")
+            return False
+        url = self.baseurl + '/startChat/' + username
+        header = {"X-Token": self.token}
+        res = requests(url, headers=header)
+        self.chatroomID = res.json().get('chatroomID')
+        self.recepientID = res.json().get('recepientID')
+        self.messages = res.json().get('messages')
+
 
 
 if __name__ == '__main__':
