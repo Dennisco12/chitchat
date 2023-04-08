@@ -21,7 +21,7 @@ class RedisClient {
     });
   }
 
-  set(key, value, duration) {
+  setex(key, value, duration) {
     this.client.set(key, value, "EX", duration, (err, result) => {
       if (err) {
         console.error(err);
@@ -31,17 +31,33 @@ class RedisClient {
     });
   }
 
+  set(key, value) {
+    this.client.set(key, value);
+  }
+
   del(key) {
-    return new Promise((resolve, reject) => {
-      this.client.del(key, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          console.log("Key deleted:", result);
-          resolve(result);
-        }
-      });
+    return this.client.del(key, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Key deleted:", result);
+      }
     });
+  }
+
+  async delSocketValue(value) {
+    console.log("Value to delete", value);
+    for await (const key of this.client.scanIterator()) {
+      if (key.startsWith("socket_")) {
+        const val = await this.get(key);
+        console.log("Keys", key, "VAl", val);
+        if (val === value) {
+          await this.del(key);
+          return val;
+        }
+      }
+    }
+    return null;
   }
 }
 

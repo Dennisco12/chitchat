@@ -2,7 +2,7 @@
 """Module containing the entry point of the command interpreter."""
 import cmd
 import sys
-#import event
+# import event
 import requests
 
 
@@ -83,7 +83,8 @@ class ChitChatCommand(cmd.Cmd):
                 token = res.text
             else:
                 otp = input("Verification failed, you have one attempt left: ")
-                res = requests.post(url, data={"otp": otp, "identifier": email})
+                res = requests.post(
+                    url, data={"otp": otp, "identifier": email})
                 if res.status_code == 201:
                     print("...Verification succesful...")
                     token = res.json().get('user').get('token')
@@ -98,26 +99,30 @@ class ChitChatCommand(cmd.Cmd):
         identifier = input("Enter your username or email: ")
         password = input("Enter your password: ")
         url = self.baseurl + '/login'
-        res = requests.post(url, data={"identifier": identifier.lower(), "password": password})
+        res = requests.post(
+            url, data={"identifier": identifier.lower(), "password": password})
         if res.status_code != 201 and res.status_code != 202:
-            print("An error has occured with code: {} \n {}".format(res.status_code, res.text))
+            print("An error has occured with code: {} \n {}".format(
+                res.status_code, res.text))
             return False
-        elif res.status_code == 202:
+        elif res.status_code == 205:
             print("Welcome back {}, Let's get you verified".format(res.text))
             otp = input("Please enter the OTP sent to your email: ")
             url = f'{self.baseurl}/users/confirmOTP'
             data = {"identifier": identifier, "otp": otp}
             response = requests.post(url, data=data)
             if response.status_code != 201:
-                otp = input("Verification failed, you have one more attempt...")
+                otp = input(
+                    "Verification failed, you have one more attempt...")
                 data = {"identifier": identifier, "otp": otp}
                 response = requests.post(url, data=data)
                 if response.status_code != 201:
                     print("Verification failed")
                     return False
                 else:
-                    print("Your account has been verified successfully, response: {}".format(response.text))
-                
+                    print("Your account has been verified successfully, response: {}".format(
+                        response.text))
+
             else:
                 print('Your account has been verified succesfully')
         else:
@@ -150,7 +155,6 @@ class ChitChatCommand(cmd.Cmd):
         self.chatroomID = res.json().get('chatroomID')
         self.recepientID = res.json().get('recepientID')
         self.messages = res.json().get('messages')
-
 
 
 if __name__ == '__main__':

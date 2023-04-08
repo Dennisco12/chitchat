@@ -69,13 +69,13 @@ const AuthController = {
 
     if (!identifier) {
       response
-        .status(401)
+        .status(400)
         .json({ error: "Please provide an email address or username" });
       return;
     }
 
     if (!password) {
-      response.status(401).json({ error: "Please provide a password" });
+      response.status(400).json({ error: "Please provide a password" });
       return;
     }
 
@@ -100,13 +100,13 @@ const AuthController = {
       if (user.isVerified) {
         const token = uuidv4();
         const key = `auth_${token}`;
-        redisClient.set(key, user._id.toString(), 60 * 60 * 24);
+        redisClient.setex(key, user._id.toString(), 60 * 60 * 24);
         response.status(201).json({ message: "Login Successful", token, user });
         return;
       } else {
         Functions.generateOTP(user.email, user.username, "sendOtp");
         response
-          .status(202)
+          .status(205)
           .json({ message: "Verification otp sent to your email" });
       }
     } else {

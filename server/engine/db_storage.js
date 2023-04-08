@@ -20,22 +20,12 @@ class DBClient {
       });
   }
 
-  async isAlive() {
-    return this.client.isConnected();
-  }
-
-  async nbUsers() {
-    try {
-      const users = this.usersCollection();
-      const count = await users.countDocuments();
-      return count;
-    } catch (error) {
-      return -1;
-    }
-  }
-
   async usersCollection() {
     return this.client.db().collection("users");
+  }
+
+  async chatroomsCollection() {
+    return this.client.db().collection("chatrooms");
   }
 }
 
