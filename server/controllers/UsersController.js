@@ -168,7 +168,7 @@ class UsersController {
 
     const token = uuidv4();
     const key = `auth_${token}`;
-    redisClient.set(key, user._id.toString(), 60 * 60 * 24);
+    redisClient.setex(key, user._id.toString(), 60 * 60 * 24);
 
     response
       .status(201)

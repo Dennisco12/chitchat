@@ -20,7 +20,8 @@ def message(data):
 
 
 def connectToSocket():
-    sio.connect(socket_url)
+    sio.connect(socket_url, headers={'X-Token': ""})
+    sio.wait()
 
 
 def sendMessage():
