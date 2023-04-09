@@ -33,7 +33,8 @@ def confirmOTP():
     response = requests.post(url, data=globalstate.HOLDER)
 
 
-def startChat(message_win):
+def startChat(message_win,):
+    log('\nLoading Chatroom...', message_win)
     url = globalstate.BASEURL + '/startChat/' + globalstate.HOLDER['username']
     res = requests.get(url, headers={'X-Token': globalstate.TOKEN})
     if res.status_code != 201 and res.status_code != 202:
@@ -45,4 +46,3 @@ def startChat(message_win):
         globalstate.chatroomID = res.json().get('chatroomID')
         globalstate.recepientID = res.json().get('recepientID')
         globalstate.messages = res.json().get('messages')
-        log('\nLoading Chatroom...', message_win)

@@ -19,7 +19,7 @@ def process_commands(text, message_win, input_win):
             homepage(message_win)
         elif globalstate.isLoggedIn:
             if text == 'startchat':
-                auth_functions.startchat(message_win, text)
+                auth_functions.startchat(message_win, text, input_win)
             else:
                 showError(f'Command {text} not found!', message_win)
         else:
@@ -33,7 +33,7 @@ def process_commands(text, message_win, input_win):
     elif globalstate.STATUS == 'login':
         auth_functions.login(message_win, text)
     elif globalstate.STATUS == 'startchat':
-        auth_functions.startchat(message_win, text)
+        auth_functions.startchat(message_win, text, input_win)
     elif globalstate.STATUS == 'message':
         sendMessage(message_win, text)
     elif globalstate.STATUS == 'loading':

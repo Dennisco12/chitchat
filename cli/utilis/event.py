@@ -17,9 +17,16 @@ def connect():
     globalstate.message_win.addstr("Chatting with: ", curses.color_pair(47))
     globalstate.message_win.addstr(f'{globalstate.HOLDER["username"]}\n\n',
                                    curses.color_pair(200))
+    globalstate.message_win.refresh()
     globalstate.restore()
     globalstate.PLACEHOLDER = 'Message'
     globalstate.STATUS = 'message'
+    globalstate.input_win.clear()
+    globalstate.input_win.addstr("> ")
+    globalstate.input_win.addstr(
+        f'{globalstate.PLACEHOLDER}...', curses.color_pair(236))
+    globalstate.input_win.move(globalstate.input_win.getyx()[0], 2)
+    globalstate.input_win.refresh()
     height = globalstate.message_win.getmaxyx()[0]
     for message in globalstate.messages[-1*(height-7):]:
         renderMessage(globalstate.message_win, message)
