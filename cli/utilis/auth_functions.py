@@ -86,10 +86,10 @@ def startchat(message_win, text='', input_win=None):
                          curses.color_pair(236))
         input_win.move(input_win.getyx()[0], 2)
         input_win.refresh()
-        try:
-            apicalls.startChat(message_win, input_win)
-        except:
-            showError("An unknown error has occured!", message_win)
+        # try:
+        apicalls.startChat(message_win, input_win)
+        # except:
+        #     showError("An unknown error has occured!", message_win)
     else:
         globalstate.STATUS = 'startchat'
         globalstate.PLACEHOLDER = 'Username'
