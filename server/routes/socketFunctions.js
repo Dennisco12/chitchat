@@ -37,29 +37,29 @@ module.exports = function (io) {
       const { message, chatroomID, recepientID } = data;
       const recipientSocket = await redisClient.get(`socket_${recepientID}`);
       if (recipientSocket) {
-        console.log(
-          "message",
-          message,
-          "recipientSocket",
-          recipientSocket,
-          "sendID",
-          socket.userID
-        );
         io.to(recipientSocket).emit("message", {
           message,
           senderID: socket.userID,
           recepientID: recepientID,
-          createdAt: new Date(),
+          createdAt: new Date().getTime(),
           senderusername: socket.username,
         });
-        const messageData = {
-          senderID: socket.userID,
-          message: message.toString(),
-          recepientID: recepientID,
-          senderusername: socket.username,
-        };
-        MessageController.appendMessage(chatroomID, messageData);
       }
+      console.log(
+        "message",
+        message,
+        "recipientSocket",
+        recipientSocket,
+        "sendID",
+        socket.userID
+      );
+      const messageData = {
+        senderID: socket.userID,
+        message: message.toString(),
+        recepientID: recepientID,
+        senderusername: socket.username,
+      };
+      MessageController.appendMessage(chatroomID, messageData);
     });
 
     socket.on("disconnect", async () => {

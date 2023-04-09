@@ -217,7 +217,6 @@ class ChitChatCommand(cmd.Cmd):
         recepientID = res.json().get('recepientID')
         messages = res.json().get('messages')
 
-        event.connectToSocket(self.token)
         event.sendMessage(messages, chatroomID, recepientID)
 
     def do_show(self, line):

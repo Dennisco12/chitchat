@@ -35,6 +35,8 @@ def main(stdscr):
     input_win.refresh()
     input_str = ''
     overflow = 0
+    globalstate.message_win = message_win
+    globalstate.input_win = input_win
     try:
         while True:
             try:
@@ -49,9 +51,8 @@ def main(stdscr):
             elif ch == curses.KEY_ENTER or ch == 10:  # Enter key
                 input_win.clear()
                 input_win.addstr("> ")
-                log(input_str, message_win)
-                # process_commands(input_str,
-                #                  message_win, input_win)
+                process_commands(input_str,
+                                 message_win, input_win)
                 input_win.addstr(f'{globalstate.PLACEHOLDER}...', GREY)
                 input_win.move(input_win.getyx()[0], 2)
                 input_win.refresh()
@@ -94,7 +95,7 @@ def main(stdscr):
                     input_win.clear()
                     if len(input_list) == 0:
                         input_win.addstr("> ")
-                        input_win.addstr('Command...', GREY)
+                        input_win.addstr(f'{globalstate.PLACEHOLDER}...', GREY)
                         input_win.move(input_win.getyx()[0], 2)
                         input_win.refresh()
                     elif len(input_str) >= width-3:

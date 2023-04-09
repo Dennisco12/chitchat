@@ -1,7 +1,7 @@
-import os
 import curses
 import threading
 from globalvaribles import globalstate
+from datetime import datetime
 
 
 def homepage(message_win):
@@ -43,4 +43,24 @@ def showError(err, message_win):
 
 def log(text, message_win):
     message_win.addstr(f"\n{text}", curses.color_pair(22))
+    message_win.refresh()
+
+
+def timestampToDate(timestamp):
+    timestamp_sec = timestamp / 1000
+    dt = datetime.fromtimestamp(timestamp_sec)
+    return dt.strftime('%-I:%M%p')
+
+
+def renderMessage(message_win, message):
+    COLOR = ''
+    time = timestampToDate(message['createdAt'])
+    msg = message['message']
+    senderusername = message['senderusername']
+    if (senderusername == globalstate.USERNAME):
+        COLOR = curses.color_pair(22)
+    else:
+        COLOR = curses.color_pair(200)
+    message_win.addstr(f"[{time} {senderusername}]: ", COLOR)
+    message_win.addstr(msg+'\n')
     message_win.refresh()
