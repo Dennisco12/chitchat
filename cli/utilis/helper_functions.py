@@ -47,7 +47,7 @@ def log(text, message_win):
 
 
 def timestampToDate(timestamp):
-    timestamp_sec = timestamp / 1000
+    timestamp_sec = int(timestamp) / 1000
     dt = datetime.fromtimestamp(timestamp_sec)
     return dt.strftime('%-I:%M%p')
 

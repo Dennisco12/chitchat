@@ -26,7 +26,7 @@ def process_commands(text, message_win, input_win):
             if text == 'signup':
                 pass
             elif text == 'login':
-                auth_functions.login(message_win, )
+                auth_functions.login(message_win)
             else:
                 showError(f'Command {text} not found!', message_win)
 
