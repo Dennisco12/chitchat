@@ -54,6 +54,7 @@ def login(message_win, text=''):
             globalstate.HOLDER['password'] = text
             globalstate.POS = 1
             globalstate.PLACEHOLDER = 'Loading'
+            globalstate.STATUS = 'loading'
             message_win.addstr('*'*len(text)+'\n', curses.color_pair(85))
             message_win.addstr('\n\nLogging you in...', curses.color_pair(200))
             message_win.refresh()
@@ -76,8 +77,9 @@ def login(message_win, text=''):
 def startchat(message_win, text=''):
     if globalstate.STATUS == 'startchat':
         globalstate.HOLDER['username'] = text.lower().strip()
-        message_win.addstr(f'{text}\n', curses.color_pair(85))
+        message_win.addstr(f' {text}\n', curses.color_pair(85))
         globalstate.PLACEHOLDER = 'Loading'
+        globalstate.STATUS = 'loading'
         try:
             apicalls.startChat(message_win)
         except:

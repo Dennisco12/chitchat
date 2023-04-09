@@ -36,5 +36,7 @@ def process_commands(text, message_win, input_win):
         auth_functions.startchat(message_win, text)
     elif globalstate.STATUS == 'message':
         sendMessage(message_win, text)
+    elif globalstate.STATUS == 'loading':
+        pass
     else:
         pass

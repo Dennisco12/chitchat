@@ -14,13 +14,12 @@ def main(stdscr):
     curses.curs_set(2)
     curses.start_color()
     curses.use_default_colors()
-    for i in range(0, curses.COLORS):
-        try:
+    try:
+        for i in range(0, curses.COLORS):
             curses.init_pair(i + 1, i, -1)
-        except:
-            pass
+    except:
+        pass
     GREY = curses.color_pair(236)
-    PINK = curses.color_pair(200)
 
     message_height = height - 2
     message_win = curses.newwin(message_height, width, 0, 0)
