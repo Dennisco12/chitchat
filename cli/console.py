@@ -2,9 +2,11 @@
 """Module containing the entry point of the command interpreter."""
 import cmd
 import sys
-from cli import event
+import event
 import requests
 from colorama import Fore, Back, Style
+from helper_functions import saveToken
+import os
 
 
 class ChitChatCommand(cmd.Cmd):
@@ -12,7 +14,14 @@ class ChitChatCommand(cmd.Cmd):
     of this project."""
 
     prompt = '(chitchat) '
-    baseurl = 'https://fb1a-102-88-63-48.ngrok-free.app'
+    baseurl = 'http://localhost:3000'
+    token = 'abf2dbf2-858c-4767-9f00-d43f1410fc06'
+
+    def preloop(self):
+        os.system("cls" if os.name == "nt" else "clear")
+        print(Fore.GREEN+'Welcome to ChitChat'+Style.RESET_ALL)
+
+        super().preloop()
 
     def precmd(self, line):
         """Runs some actions before a line of command is executed.
@@ -55,49 +64,47 @@ class ChitChatCommand(cmd.Cmd):
         print("")
         return True
 
-    def do_echo(self, line):
-        """Echo command"""
-        print(line)
-
     def do_signup(self, line):
         """This creates a user in the database
         return the user id and token"""
-        email = input("Please enter your email: ")
+        email = input(Fore.BLUE + "Please enter your email: ")
         while len(email) == 0:
-            print("* Email field cannot be empty, please try again *")
-            email = input("Please enter your email: ")
-        username = input("Please enter your username: ")
-        password = input("Please enter your password: ")
+            print(Fore.RED + "* Email field cannot be empty, please try again *")
+            email = input(Fore.BLUE + "Please enter your email: ")
+        username = input(Fore.BLUE + "Please enter your username: ")
+        password = input(Fore.BLUE + "Please enter your password: ")
         url = f'{self.baseurl}/signup'
         data = {"email": email, "username": username, "password": password}
         response = requests.post(url, data=data)
         if response.status_code != 201:
-            print("An error has occurred with code:",
+            print(Fore.RED + "An error has occurred with code:",
                   response.status_code, "\n", response.text)
         else:
-            print('Your account has been created succesfully')
-            otp = input('Enter the OTP sent to your email: ')
+            print(Fore.GREEN+'Your account has been created succesfully')
+            otp = input(Fore.BLUE + 'Enter the OTP sent to your email: ')
             url = self.baseurl + '/users/confirmOTP'
             res = requests.post(url, data={"otp": otp, "identifier": email})
             if res.status_code == 201:
-                print("...Verification succesful...")
+                print(Fore.GREEN + "...Verification succesful...")
                 token = res.text
             else:
-                otp = input("Verification failed, you have one attempt left: ")
+                otp = input(
+                    Fore.RED + "Verification failed, you have one attempt left: ")
                 res = requests.post(
                     url, data={"otp": otp, "identifier": email})
                 if res.status_code == 201:
-                    print("...Verification succesful...")
+                    print(Fore.GREEN + "...Verification succesful...")
                     token = user.get('token')
                     self.prompt = "({}) ".format(username)
                 else:
-                    print("...Verification failed...")
+                    print(Fore.RED + "...Verification failed...")
         return False
 
     def do_login(self, line):
         """This takes in username or email and password and 
         creates a session for the user"""
-        identifier = input(Fore.BLUE + "Enter your username or email: " + Style.RESET_ALL)
+        identifier = input(
+            Fore.BLUE + "Enter your username or email: " + Style.RESET_ALL)
         password = input(Fore.BLUE + "Enter your password: " + Style.RESET_ALL)
         url = self.baseurl + '/login'
         res = requests.post(
@@ -107,7 +114,8 @@ class ChitChatCommand(cmd.Cmd):
                 res.status_code, res.text))
             return False
         elif res.status_code == 205:
-            print("Welcome back {}, Let's get you verified".format(res.json().get('user').get('username')))
+            print("Welcome back {}, Let's get you verified".format(
+                res.json().get('user').get('username')))
             otp = input("Please enter the OTP sent to your email: ")
             url = f'{self.baseurl}/users/confirmOTP'
             data = {"identifier": identifier, "otp": otp}
@@ -135,6 +143,7 @@ class ChitChatCommand(cmd.Cmd):
         self._id = res.json().get('user').get('_id')
         self.token = res.json().get('token')
         self.username = res.json().get('user').get('username')
+        saveToken(res.json().get('token'))
         self.prompt = "({}) ".format(self.username)
 
     def do_updateMe(self, line):
@@ -151,17 +160,21 @@ class ChitChatCommand(cmd.Cmd):
         self.prompt = "({}) ".format(res.json().get('user').get('username'))
 
         user = res.json().get('user').get('profileDetails')
-        
+
         print("First name: {}".format(user.get('firstName')))
-        firstname = input("Enter a new value or press enter to leave it unchanged: ")
+        firstname = input(
+            "Enter a new value or press enter to leave it unchanged: ")
         print("Last name: {}".format(user.get('lastName')))
-        lastname = input("Enter a new value or press enter to leave it unchanged: ")
+        lastname = input(
+            "Enter a new value or press enter to leave it unchanged: ")
         print("Bio: {}".format(user.get('bio')))
         bio = input("Enter a new value or press enter to leave it unchanged: ")
         print('Level: {}'.format(user.get('level')))
-        level = input("Enter a new value or press enter to leave it unchanged: ")
+        level = input(
+            "Enter a new value or press enter to leave it unchanged: ")
         print("Tech stack: {}".format(user.get('techStack')))
-        techstack = input("Enter a new value or press enter to leave it unchanged: ")
+        techstack = input(
+            "Enter a new value or press enter to leave it unchanged: ")
 
         newDict = {}
         if len(firstname) != 0:
@@ -179,7 +192,8 @@ class ChitChatCommand(cmd.Cmd):
 
         res = requests.put(url, data=newDict, headers={"X-Token": self.token})
         if res.status_code != 201:
-            print("An error has occured with code: {}. \nError message: {}".format(res.status_code, res.text))
+            print("An error has occured with code: {}. \nError message: {}".format(
+                res.status_code, res.text))
             return False
         else:
             print("Your details have been updated successfully")
@@ -217,13 +231,14 @@ class ChitChatCommand(cmd.Cmd):
             if resp.status_code != 201:
                 print("No user found")
                 return False
-            
+
             user = resp.json().get('user').get('profileDetails')
             for key, val in user.items():
                 print("{} --> {}".format(key, val))
         else:
             print("Usage: show me")
             return False
+
 
 if __name__ == '__main__':
     # event.connectToSocket()

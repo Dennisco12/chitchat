@@ -4,7 +4,7 @@
 
 import socketio
 
-socket_url = 'https://fb1a-102-88-63-48.ngrok-free.app'
+socket_url = 'http://localhost:3000'
 
 sio = socketio.Client()
 
@@ -25,4 +25,5 @@ def connectToSocket(token):
 
 
 def sendMessage(message, chatroomID, recepientID):
-    sio.emit('message', { "message": message, "chatroomID": chatroomID, "recepientID": recepientID })
+    sio.emit('message', {"message": message,
+             "chatroomID": chatroomID, "recepientID": recepientID})
