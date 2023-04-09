@@ -6,13 +6,23 @@ import socketio
 from globalvaribles import globalstate
 from utilis.helper_functions import renderMessage, showError
 from datetime import datetime
+import curses
 
 sio = socketio.Client()
 
 
 @sio.event
 def connect():
-    pass
+    globalstate.message_win.clear()
+    globalstate.message_win.addstr("Chatting with: ", curses.color_pair(47))
+    globalstate.message_win.addstr(f'{globalstate.HOLDER["username"]}\n\n',
+                                   curses.color_pair(200))
+    globalstate.restore()
+    globalstate.PLACEHOLDER = 'Message'
+    globalstate.STATUS = 'message'
+    height = globalstate.message_win.getmaxyx()[0]
+    for message in globalstate.messages[-1*(height-7):]:
+        renderMessage(globalstate.message_win, message)
 
 
 @sio.event
