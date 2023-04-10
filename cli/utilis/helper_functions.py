@@ -52,7 +52,7 @@ def timestampToDate(timestamp):
         dt = datetime.fromtimestamp(timestamp_sec)
     except Exception:
         return 'Invalid time'
-    return dt.strftime('%-I:%M%p')
+    return dt
 
 
 def renderMessage(message_win, message):
