@@ -47,12 +47,9 @@ def log(text, message_win):
 
 
 def timestampToDate(timestamp):
-    try:
-        timestamp_sec = int(timestamp) / 1000
-        dt = datetime.fromtimestamp(timestamp_sec)
-    except Exception:
-        return 'Invalid time'
-    return dt
+    timestamp_sec = int(timestamp) / 1000
+    dt = datetime.fromtimestamp(timestamp_sec)
+    return f'{str(dt.hour).zfill(2)}:{str(dt.minute).zfill(2)}'
 
 
 def renderMessage(message_win, message):
