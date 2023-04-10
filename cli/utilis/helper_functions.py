@@ -15,7 +15,7 @@ def homepage(message_win):
         menu = ["StartChat", "Search", 'UpdateMe',
                 'ViewProfile', 'ViewUser', "Help", "Quit"]
     else:
-        menu = ["Signup", "Login", "Help", "Quit"]
+        menu = ["Signup", "Login", "ForgotPassword", "Help", "Quit"]
 
     message_win.addstr("\nMenu:\n", curses.color_pair(47))
     for i, item in enumerate(menu):

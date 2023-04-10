@@ -14,6 +14,7 @@ router.post("/login", AuthController.getLogin);
 router.post("/resetPassword", AuthController.getResetPassword);
 router.put("/resetPassword", AuthController.getUpdatePassword);
 router.get("/users/me", UsersController.getMe);
+router.get("/users/:username", UsersController.getUser);
 router.get("/users/friends", UsersController.getFriends);
 router.post("/users/checkUsernameExists", UsersController.checkUsernameExists);
 router.post("/users/sendOTP", UsersController.sendOTP);
