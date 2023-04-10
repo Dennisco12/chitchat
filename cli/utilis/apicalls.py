@@ -93,3 +93,18 @@ def getProfile(message_win):
         user = res.json().get('user')
         globalstate.EMAIL = user['email']
         globalstate.profileDetails = user.get('profileDetails')
+
+
+def getUser(message_win, username):
+    url = globalstate.BASEURL + f'/users/{username}'
+
+    res = requests.get(url, headers={
+                       "X-Token": globalstate.TOKEN})
+    if res.status_code != 201:
+        showError("An error has occured with code: {}. \nError message: {}".format(
+            res.status_code, res.text), message_win)
+    else:
+        user = res.json().get('user')
+        globalstate.USERUSERNAME = user['username']
+        globalstate.USEREMAIL = user['email']
+        globalstate.USERprofileDetails = user.get('profileDetails')

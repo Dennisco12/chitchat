@@ -45,6 +45,8 @@ def main(stdscr):
                 input_win.addstr("> ")
                 process_commands(input_str,
                                  message_win, input_win)
+                input_win.clear()
+                input_win.addstr("> ")
                 input_win.addstr(f'{globalstate.PLACEHOLDER}...', GREY)
                 input_win.move(input_win.getyx()[0], 2)
                 input_win.refresh()

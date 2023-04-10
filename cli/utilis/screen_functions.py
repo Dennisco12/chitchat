@@ -211,6 +211,67 @@ def viewprofile(message_win,  input_win=None):
     message_win.refresh()
 
 
+def viewuser(message_win,  input_win=None, text=''):
+    if globalstate.STATUS == 'viewuser':
+        message_win.clear()
+        message_win.addstr('View User Profile\n\n', curses.color_pair(200))
+        log(
+            'Loading Profile Details...', message_win)
+        globalstate.PLACEHOLDER = 'Loading'
+        globalstate.STATUS = 'loading'
+        input_win.clear()
+        input_win.addstr("> ")
+        input_win.addstr(f'{globalstate.PLACEHOLDER}...',
+                         curses.color_pair(236))
+        input_win.move(input_win.getyx()[0], 2)
+        input_win.refresh()
+
+        try:
+            apicalls.getUser(message_win, text)
+        except:
+            showError("An unknown error has occured!", message_win)
+        globalstate.STATUS = 'viewprofile'
+        globalstate.PLACEHOLDER = 'Back'
+        message_win.clear()
+        message_win.addstr('View User Profile\n\n', curses.color_pair(200))
+        message_win.addstr("Username: ")
+        message_win.addstr(
+            f'{globalstate.USERUSERNAME}', curses.color_pair(200))
+        message_win.addstr("\nEmail: ")
+        message_win.addstr(
+            f'{globalstate.USEREMAIL}', curses.color_pair(200))
+        if globalstate.USERprofileDetails:
+            message_win.addstr("\nFirst Name: ")
+            message_win.addstr(
+                f'{globalstate.USERprofileDetails.get("firstName")}', curses.color_pair(200))
+            message_win.addstr("\nLast Name: ")
+            message_win.addstr(
+                f'{globalstate.USERprofileDetails.get("lastName")}', curses.color_pair(200))
+            message_win.addstr("\nBio: ")
+            message_win.addstr(
+                f'{globalstate.USERprofileDetails.get("bio")}', curses.color_pair(200))
+            message_win.addstr("\nLevel: ")
+            message_win.addstr(
+                f'{globalstate.USERprofileDetails.get("level")}', curses.color_pair(200))
+            message_win.addstr("\nTech Stack: ")
+            message_win.addstr(
+                f'{globalstate.USERprofileDetails.get("techStack")}', curses.color_pair(200))
+        message_win.addstr("\n\nMenu:\n", curses.color_pair(47))
+        message_win.addstr(
+            '1. Back')
+        message_win.refresh()
+    else:
+        globalstate.STATUS = 'viewuser'
+        globalstate.PLACEHOLDER = 'Username'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('View User Profile\n\n', curses.color_pair(200))
+        message_win.addstr(
+            'Enter the username of the user:', )
+        message_win.refresh()
+
+
 def runhelp(message_win,):
     message_win.clear()
     message_win.addstr('Welcome to the ')

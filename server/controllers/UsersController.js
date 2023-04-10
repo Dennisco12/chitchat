@@ -74,7 +74,23 @@ class UsersController {
       response.status(401).json({ error: "Unauthorized" });
     }
   }
+  static async getUser(request, response) {
+    const token = request.header("X-Token");
+    const key = `auth_${token}`;
+    const userId = await redisClient.get(key);
+    if (userId) {
+      const { username } = request.params;
 
+      const user = await Functions.searchUser({ username });
+      if (user) {
+        response.status(201).json({ id: userId, user: user });
+      } else {
+        response.status(401).json({ error: "User not found" });
+      }
+    } else {
+      response.status(401).json({ error: "Unauthorized" });
+    }
+  }
   static async editProfile(request, response) {
     const updates = request.body;
     const token = request.header("X-Token");
