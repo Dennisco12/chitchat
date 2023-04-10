@@ -79,3 +79,17 @@ def updateme(message_win):
         time.sleep(4)
         globalstate.restore()
         homepage(message_win)
+
+
+def getProfile(message_win):
+    url = globalstate.BASEURL + '/users/me'
+
+    res = requests.get(url, headers={
+                       "X-Token": globalstate.TOKEN})
+    if res.status_code != 201:
+        showError("An error has occured with code: {}. \nError message: {}".format(
+            res.status_code, res.text), message_win)
+    else:
+        user = res.json().get('user')
+        globalstate.EMAIL = user['email']
+        globalstate.profileDetails = user.get('profileDetails')

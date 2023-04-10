@@ -1,7 +1,7 @@
 from globalvaribles import globalstate
 import curses
 from utilis import apicalls
-from utilis.helper_functions import showError
+from utilis.helper_functions import showError, log
 # def signup():
 #     """This creates a user in the database
 #     return the user id and token"""
@@ -159,3 +159,76 @@ def updateme(message_win, text=''):
         message_win.addstr(
             'Enter your First Name:', )
         message_win.refresh()
+
+
+def viewprofile(message_win,  input_win=None):
+    message_win.clear()
+    message_win.addstr('View Profile\n\n', curses.color_pair(200))
+    log(
+        'Loading Profile Details...', message_win)
+    globalstate.PLACEHOLDER = 'Loading'
+    globalstate.STATUS = 'loading'
+    input_win.clear()
+    input_win.addstr("> ")
+    input_win.addstr(f'{globalstate.PLACEHOLDER}...',
+                     curses.color_pair(236))
+    input_win.move(input_win.getyx()[0], 2)
+    input_win.refresh()
+
+    try:
+        apicalls.getProfile(message_win)
+    except:
+        showError("An unknown error has occured!", message_win)
+    globalstate.STATUS = 'viewprofile'
+    globalstate.PLACEHOLDER = 'Back'
+    message_win.clear()
+    message_win.addstr('View Profile\n\n', curses.color_pair(200))
+    message_win.addstr("Username: ")
+    message_win.addstr(
+        f'{globalstate.USERNAME}', curses.color_pair(200))
+    message_win.addstr("\nEmail: ")
+    message_win.addstr(
+        f'{globalstate.EMAIL}', curses.color_pair(200))
+    if globalstate.profileDetails:
+        message_win.addstr("\nFirst Name: ")
+        message_win.addstr(
+            f'{globalstate.profileDetails.get("firstName")}', curses.color_pair(200))
+        message_win.addstr("\nLast Name: ")
+        message_win.addstr(
+            f'{globalstate.profileDetails.get("lastName")}', curses.color_pair(200))
+        message_win.addstr("\nBio: ")
+        message_win.addstr(
+            f'{globalstate.profileDetails.get("bio")}', curses.color_pair(200))
+        message_win.addstr("\nLevel: ")
+        message_win.addstr(
+            f'{globalstate.profileDetails.get("level")}', curses.color_pair(200))
+        message_win.addstr("\nTech Stack: ")
+        message_win.addstr(
+            f'{globalstate.profileDetails.get("techStack")}', curses.color_pair(200))
+    message_win.addstr("\n\nMenu:\n", curses.color_pair(47))
+    message_win.addstr(
+        '1. Back')
+    message_win.refresh()
+
+
+def runhelp(message_win,):
+    message_win.clear()
+    message_win.addstr('Welcome to the ')
+    message_win.addstr('ChitChat ', curses.color_pair(200))
+    message_win.addstr('Help Center!\n\n')
+    message_win.addstr('To use ChitChat, follow these steps:\n')
+    message_win.addstr('1. Launch the app from the command line\n')
+    message_win.addstr(
+        '2. Choose a login or create account to start chatting with others\n')
+    message_win.addstr(
+        '3. Get the username of someone you want to chat with\n')
+    message_win.addstr(
+        '4. Enter "StartChat" to enter a chatroom and start chatting\n')
+    message_win.addstr(
+        '5. Use the "Quit" option or "Ctrl C" to quit the app\n\n')
+    message_win.addstr(
+        'If you experience any issues or need further assistance, please contact our customer support team at chitchatcli@gmail.com.\n')
+    message_win.addstr("\nMenu:\n", curses.color_pair(47))
+    message_win.addstr(
+        '1. Back')
+    message_win.refresh()
