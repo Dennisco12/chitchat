@@ -1,7 +1,7 @@
 import requests
-from globalvaribles import globalstate
-from utilis.helper_functions import showError, homepage, log
-from utilis.storage import storage
+from cli.globalvaribles import globalstate
+from cli.utilis.helper_functions import showError, homepage, log
+from cli.utilis.storage import storage
 
 
 def login(message_win):

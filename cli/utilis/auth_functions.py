@@ -1,6 +1,6 @@
-from globalvaribles import globalstate
+from cli.globalvaribles import globalstate
 import curses
-from utilis import apicalls
+from cli.utilis import apicalls
 # def signup():
 #     """This creates a user in the database
 #     return the user id and token"""

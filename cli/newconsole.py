@@ -1,8 +1,8 @@
 import curses
 from curses import wrapper
-from utilis.process import process_commands
-from globalvaribles import globalstate
-from utilis.helper_functions import homepage
+from cli.utilis.process import process_commands
+from cli.globalvaribles import globalstate
+from cli.utilis.helper_functions import homepage
 
 
 def main(stdscr):

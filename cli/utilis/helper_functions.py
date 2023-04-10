@@ -1,7 +1,7 @@
 import os
 import curses
 import threading
-from globalvaribles import globalstate
+from cli.globalvaribles import globalstate
 
 
 def homepage(message_win):

@@ -1,6 +1,6 @@
-from utilis import help, auth_functions
-from globalvaribles import globalstate
-from utilis.helper_functions import homepage, showError
+from cli.utilis import help, auth_functions
+from cli.globalvaribles import globalstate
+from cli.utilis.helper_functions import homepage, showError
 
 
 def process_commands(text, message_win, input_win):

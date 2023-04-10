@@ -1,4 +1,4 @@
-from utilis.storage import storage
+from cli.utilis.storage import storage
 
 
 class GlobalState():
