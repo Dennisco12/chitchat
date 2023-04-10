@@ -3,7 +3,7 @@ from utilis.storage import storage
 
 class GlobalState():
 
-    BASEURL = 'https://7648-102-88-63-34.ngrok-free.app'
+    BASEURL = 'http://localhost:3000'
     STATUS = 'command'
     PLACEHOLDER = "Command"
     HOLDER = {}
@@ -11,6 +11,7 @@ class GlobalState():
     POS = 0
     USERNAME = ''
     isLoggedIn = False
+    RUNNING = True
 
     def __init__(self):
         token = storage.retrieve('token')

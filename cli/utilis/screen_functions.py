@@ -100,3 +100,62 @@ def startchat(message_win, text='', input_win=None):
         message_win.addstr(
             'Please enter the username of the person you would like to chat with:', )
         message_win.refresh()
+
+
+def updateme(message_win, text=''):
+    if globalstate.STATUS == 'updateme':
+        if globalstate.POS == 0:
+            globalstate.HOLDER['firstName'] = text.strip()
+            message_win.addstr(f' {text}\n', curses.color_pair(85))
+            globalstate.PLACEHOLDER = 'LastName'
+            globalstate.POS = 1
+            message_win.addstr('Enter your Last Name: ', )
+            message_win.refresh()
+        elif globalstate.POS == 1:
+            globalstate.HOLDER['lastName'] = text.strip()
+            message_win.addstr(f' {text}\n', curses.color_pair(85))
+            globalstate.PLACEHOLDER = 'Bio'
+            globalstate.POS = 2
+            message_win.addstr('Enter your Bio: ', )
+            message_win.refresh()
+        elif globalstate.POS == 2:
+            globalstate.HOLDER['bio'] = text.strip()
+            message_win.addstr(f' {text}\n', curses.color_pair(85))
+            globalstate.PLACEHOLDER = 'Level'
+            globalstate.POS = 3
+            message_win.addstr(
+                'Enter your Level ')
+            message_win.addstr('(Junior, Intermidiate or Senior): ',
+                               curses.color_pair(236))
+            message_win.refresh()
+        elif globalstate.POS == 3:
+            globalstate.HOLDER['level'] = text.strip()
+            message_win.addstr(f' {text}\n', curses.color_pair(85))
+            globalstate.PLACEHOLDER = 'Tech Stack'
+            globalstate.POS = 4
+            message_win.addstr('Enter technologies you use: ', )
+            message_win.refresh()
+        elif globalstate.POS == 4:
+            globalstate.HOLDER['techStack'] = text.strip()
+            message_win.addstr(f' {text}\n', curses.color_pair(85))
+            globalstate.PLACEHOLDER = 'Loading..'
+            globalstate.POS = 4
+            message_win.addstr('\n\nSaving your details...\n',
+                               curses.color_pair(200))
+            message_win.addstr(
+                'Your profile would be publicly searchable now!')
+            message_win.refresh()
+            try:
+                apicalls.updateme(message_win)
+            except:
+                showError("An unknown error has occured!", message_win)
+    else:
+        globalstate.STATUS = 'updateme'
+        globalstate.PLACEHOLDER = 'Firstname'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('Update Profile\n\n', curses.color_pair(200))
+        message_win.addstr(
+            'Enter your First Name:', )
+        message_win.refresh()

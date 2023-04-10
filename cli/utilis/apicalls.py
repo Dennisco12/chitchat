@@ -4,6 +4,7 @@ from utilis.helper_functions import showError, homepage, log, renderMessage
 from utilis.storage import storage
 from utilis.event import connectToSocket
 import curses
+import time
 
 
 def login(message_win):
@@ -63,3 +64,18 @@ def startChat(message_win, input_win):
         height = message_win.getmaxyx()[0]
         for message in globalstate.messages[-1*(height-7):]:
             renderMessage(globalstate.message_win, message)
+
+
+def updateme(message_win):
+    url = globalstate.BASEURL + '/users/editProfile'
+
+    res = requests.put(url, data=globalstate.HOLDER, headers={
+                       "X-Token": globalstate.TOKEN})
+    if res.status_code != 201:
+        showError("An error has occured with code: {}. \nError message: {}".format(
+            res.status_code, res.text), message_win)
+    else:
+        log("Your details have been updated successfully", message_win)
+        time.sleep(4)
+        globalstate.restore()
+        homepage(message_win)
