@@ -42,7 +42,7 @@ def showError(err, message_win):
 
 
 def log(text, message_win):
-    message_win.addstr(0, 0, f"\n{text}", curses.color_pair(22))
+    message_win.addstr(f"\n{text}", curses.color_pair(22))
     message_win.refresh()
 
 
@@ -63,4 +63,23 @@ def renderMessage(message_win, message):
         COLOR = curses.color_pair(200)
     message_win.addstr(f"[{time} {senderusername}]: ", COLOR)
     message_win.addstr(msg+'\n')
+    message_win.refresh()
+
+
+def renderSearchUser(message_win, user={}):
+    user1 = {'_id': '642ff43b427574d2800c9906', 'email': 'akinwonjowodennisco@gmail.com', 'username': 'dennisco',
+             'profileDetails': {'firstName': 'Dennis', 'lastName': 'Akinwonjowodenn',
+                                'bio': 'I am a Python developer, I use the flask framwork. Im also learning Javascript', 'level': 'Intermediate', 'techStack': 'Python, JavaScript, C'}}
+    profileDetails = user.get('profileDetails')
+    message_win.addstr(
+        f'{profileDetails.get("firstName")} {profileDetails.get("lastName")}', curses.color_pair(85))
+    message_win.addstr(
+        f'\n{profileDetails.get("bio")}\n', curses.color_pair(200))
+    message_win.addstr(
+        f'{user.get("username")}  {user.get("email")}\n', curses.color_pair(46))
+
+    message_win.addstr(
+        f'{profileDetails.get("level")}', curses.color_pair(184))
+    message_win.addstr(
+        f'\n{profileDetails.get("techStack")}\n\n', curses.color_pair(200))
     message_win.refresh()

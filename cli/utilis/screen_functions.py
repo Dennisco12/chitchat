@@ -86,10 +86,10 @@ def startchat(message_win, text='', input_win=None):
                          curses.color_pair(236))
         input_win.move(input_win.getyx()[0], 2)
         input_win.refresh()
-        # try:
-        apicalls.startChat(message_win, input_win)
-        # except:
-        #     showError("An unknown error has occured!", message_win)
+        try:
+            apicalls.startChat(message_win, input_win)
+        except:
+            showError("An unknown error has occured!", message_win)
     else:
         globalstate.STATUS = 'startchat'
         globalstate.PLACEHOLDER = 'Username'
@@ -293,3 +293,40 @@ def runhelp(message_win,):
     message_win.addstr(
         '1. Back')
     message_win.refresh()
+
+
+def search(message_win, text='', input_win=None):
+    if globalstate.STATUS == 'search':
+        message_win.addstr(f'{text}\n', curses.color_pair(85))
+        globalstate.PLACEHOLDER = 'Loading'
+        globalstate.STATUS = 'loading'
+        input_win.clear()
+        input_win.addstr("> ")
+        input_win.addstr(f'{globalstate.PLACEHOLDER}...',
+                         curses.color_pair(236))
+        input_win.move(input_win.getyx()[0], 2)
+        message_win.refresh()
+        input_win.refresh()
+        try:
+            apicalls.search(message_win, term=text.strip())
+        except:
+            showError("An unknown error has occured!", message_win)
+        globalstate.PLACEHOLDER = 'Search'
+        globalstate.STATUS = 'search'
+        message_win.addstr("\nMenu:\n", curses.color_pair(47))
+        message_win.addstr(
+            '1. [Another search term]\n')
+        message_win.addstr(
+            '2. Back')
+        message_win.refresh()
+
+    else:
+        globalstate.STATUS = 'search'
+        globalstate.PLACEHOLDER = 'Search'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('Find People\n\n', curses.color_pair(200))
+        message_win.addstr(
+            'Please enter a term to search for users: ', )
+        message_win.refresh()

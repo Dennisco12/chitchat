@@ -26,6 +26,8 @@ def process_commands(text, message_win, input_win):
                 screen_functions.viewprofile(message_win, input_win)
             elif text == 'viewuser':
                 screen_functions.viewuser(message_win, input_win)
+            elif text == 'search':
+                screen_functions.search(message_win, text, input_win)
             else:
                 showError(f'Command {text} not found!', message_win)
         else:
@@ -46,6 +48,8 @@ def process_commands(text, message_win, input_win):
     elif globalstate.STATUS == 'viewuser':
         screen_functions.viewuser(
             message_win, input_win, text=text.lower().strip())
+    elif globalstate.STATUS == 'search':
+        screen_functions.search(message_win, text, input_win)
     elif globalstate.STATUS == 'loading':
         pass
     else:

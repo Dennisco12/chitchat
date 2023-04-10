@@ -1,6 +1,6 @@
 import requests
 from globalvaribles import globalstate
-from utilis.helper_functions import showError, homepage, log
+from utilis.helper_functions import showError, homepage, log, renderSearchUser
 from utilis.storage import storage
 from globalvaribles import globalstate
 from utilis.helper_functions import showError, homepage, log, renderMessage
@@ -111,3 +111,23 @@ def getUser(message_win, username):
         globalstate.USERUSERNAME = user['username']
         globalstate.USEREMAIL = user['email']
         globalstate.USERprofileDetails = user.get('profileDetails')
+
+
+def search(message_win, term):
+    url = globalstate.BASEURL + '/users/search'
+
+    res = requests.post(url, data={"term": term}, headers={
+        "X-Token": globalstate.TOKEN})
+    if res.status_code != 201:
+        showError("An error has occured with code: {}. \nError message: {}".format(
+            res.status_code, res.text), message_win)
+    else:
+        re = res.json()
+        message_win.clear()
+        message_win.addstr('Search Results for ', curses.color_pair(200))
+        message_win.addstr(f'[{term}]\n\n', curses.color_pair(57))
+        if len(re) > 0:
+            for user in re:
+                renderSearchUser(message_win, user)
+        else:
+            log('\nNo user found for that search term!\n\n', message_win)

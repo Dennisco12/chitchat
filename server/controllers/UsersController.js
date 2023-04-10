@@ -13,32 +13,39 @@ class UsersController {
     const key = `auth_${token}`;
     const id = await redisClient.get(key);
     if (id) {
-      const { term } = request.params;
+      const { term } = request.body;
       console.log("Searching for", term);
       if (!term) {
         return response.status(400).json({ error: "Search term is required" });
       }
       const users = await dbClient.usersCollection();
-
+      const terms = term.split(" ");
       const query = {
         profileDetails: { $exists: true, $ne: {} },
         $or: [
-          { username: { $regex: term, $options: "i" } },
-          { email: { $regex: term, $options: "i" } },
+          { username: { $regex: terms.join("|"), $options: "i" } },
+          { email: { $regex: terms.join("|"), $options: "i" } },
           {
-            "profileDetails.firstName": { $regex: term, $options: "i" },
+            "profileDetails.firstName": {
+              $regex: terms.join("|"),
+              $options: "i",
+            },
           },
           {
-            "profileDetails.lastName": { $regex: term, $options: "i" },
+            "profileDetails.lastName": {
+              $regex: terms.join("|"),
+              $options: "i",
+            },
+          },
+          { "profileDetails.bio": { $regex: terms.join("|"), $options: "i" } },
+          {
+            "profileDetails.techStack": {
+              $regex: terms.join("|"),
+              $options: "i",
+            },
           },
           {
-            "profileDetails.bio": { $regex: term, $options: "i" },
-          },
-          {
-            "profileDetails.techStack": { $regex: term, $options: "i" },
-          },
-          {
-            "profileDetails.level": { $regex: term, $options: "i" },
+            "profileDetails.level": { $regex: terms.join("|"), $options: "i" },
           },
         ],
       };
@@ -48,10 +55,10 @@ class UsersController {
         const usersFound = results.map(
           ({ password, otp, isVerified, ...rest }) => rest
         );
-        response.status(200).json(usersFound);
+        response.status(201).json(usersFound);
       } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Internal server error" });
+        response.status(500).json({ error: "Internal server error" });
       }
     } else {
       response.status(401).json({ error: "Unauthorized" });

@@ -21,6 +21,6 @@ router.post("/users/sendOTP", UsersController.sendOTP);
 router.post("/users/confirmOTP", UsersController.confirmOTP);
 router.put("/users/editProfile", UsersController.editProfile);
 router.get("/startChat/:recepient", MessageController.startChat);
-router.get("/users/search/:term", UsersController.searchUsers);
+router.post("/users/search", UsersController.searchUsers);
 
 module.exports = router;
