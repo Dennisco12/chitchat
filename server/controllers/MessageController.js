@@ -61,7 +61,7 @@ const MessageController = {
     const chatrooms = await dbClient.chatroomsCollection();
 
     const message = {
-      createdAt: new Date(),
+      createdAt: new Date().getTime(),
       senderID: new ObjectId(messageData.senderID),
       message: messageData.message,
       recepientID: messageData.recepientID,

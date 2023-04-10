@@ -1,6 +1,7 @@
-from cli.globalvaribles import globalstate
+from globalvaribles import globalstate
 import curses
-from cli.utilis import apicalls
+from utilis import apicalls
+from utilis.helper_functions import showError
 # def signup():
 #     """This creates a user in the database
 #     return the user id and token"""
@@ -38,7 +39,7 @@ from cli.utilis import apicalls
 #     return False
 
 
-def login(message_win, input_win, text=''):
+def login(message_win, text=''):
     """This takes in username or email and password and 
     creates a session for the user"""
     if globalstate.STATUS == 'login':
@@ -53,10 +54,14 @@ def login(message_win, input_win, text=''):
             globalstate.HOLDER['password'] = text
             globalstate.POS = 1
             globalstate.PLACEHOLDER = 'Loading'
+            globalstate.STATUS = 'loading'
             message_win.addstr('*'*len(text)+'\n', curses.color_pair(85))
             message_win.addstr('\n\nLogging you in...', curses.color_pair(200))
             message_win.refresh()
-            apicalls.login(message_win)
+            try:
+                apicalls.login(message_win)
+            except:
+                showError("An unknown error has occured!", message_win)
 
     else:
         globalstate.STATUS = 'login'
@@ -67,4 +72,31 @@ def login(message_win, input_win, text=''):
         message_win.addstr('Login\n\n', curses.color_pair(200))
         message_win.addstr('Enter your username or email: ', )
         message_win.refresh()
-        url = globalstate.BASEURL + '/login'
+
+
+def startchat(message_win, text='', input_win=None):
+    if globalstate.STATUS == 'startchat':
+        globalstate.HOLDER['username'] = text.lower().strip()
+        message_win.addstr(f' {text}\n', curses.color_pair(85))
+        globalstate.PLACEHOLDER = 'Loading'
+        globalstate.STATUS = 'loading'
+        input_win.clear()
+        input_win.addstr("> ")
+        input_win.addstr(f'{globalstate.PLACEHOLDER}...',
+                         curses.color_pair(236))
+        input_win.move(input_win.getyx()[0], 2)
+        input_win.refresh()
+        # try:
+        apicalls.startChat(message_win, input_win)
+        # except:
+        #     showError("An unknown error has occured!", message_win)
+    else:
+        globalstate.STATUS = 'startchat'
+        globalstate.PLACEHOLDER = 'Username'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('Start Chat\n\n', curses.color_pair(200))
+        message_win.addstr(
+            'Please enter the username of the person you would like to chat with:', )
+        message_win.refresh()

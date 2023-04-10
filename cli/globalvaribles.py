@@ -1,9 +1,9 @@
-from cli.utilis.storage import storage
+from utilis.storage import storage
 
 
 class GlobalState():
 
-    BASEURL = 'http://localhost:3000'
+    BASEURL = 'https://7648-102-88-63-34.ngrok-free.app'
     STATUS = 'command'
     PLACEHOLDER = "Command"
     HOLDER = {}
