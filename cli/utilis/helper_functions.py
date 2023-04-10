@@ -42,7 +42,7 @@ def showError(err, message_win):
 
 
 def log(text, message_win):
-    message_win.addstr(f"\n{text}", curses.color_pair(22))
+    message_win.addstr(0, 0, f"\n{text}", curses.color_pair(22))
     message_win.refresh()
 
 
