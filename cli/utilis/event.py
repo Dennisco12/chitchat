@@ -6,7 +6,6 @@ import socketio
 from globalvaribles import globalstate
 from utilis.helper_functions import renderMessage, showError
 from datetime import datetime
-import curses
 
 sio = socketio.Client()
 

@@ -2,7 +2,7 @@ import curses
 from curses import wrapper
 from utilis.process import process_commands
 from globalvaribles import globalstate
-from utilis.helper_functions import homepage
+from utilis.helper_functions import homepage, log
 
 
 def main(stdscr):
@@ -34,7 +34,7 @@ def main(stdscr):
     # try:
     while globalstate.RUNNING:
         ch = input_win.getch()
-
+        log(f'c {ch} chr{chr(ch)}', message_win)
         if ch == curses.KEY_EXIT or ch == 3:  # CTRL+C
             del message_win
             del input_win
