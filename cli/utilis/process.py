@@ -1,6 +1,7 @@
 from utilis import screen_functions
 from globalvaribles import globalstate
 from utilis.helper_functions import homepage, showError
+from utilis.event import sendMessage
 
 
 def process_commands(text, message_win, input_win):
