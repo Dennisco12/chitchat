@@ -100,10 +100,10 @@ def login(message_win, text=''):
             message_win.addstr('*'*len(text)+'\n', curses.color_pair(85))
             message_win.addstr('\n\nLogging you in...', curses.color_pair(200))
             message_win.refresh()
-            # try:
-            apicalls.login(message_win)
-            # except:
-            #     showError("An unknown error has occured!", message_win)
+            try:
+                apicalls.login(message_win)
+            except:
+                showError("An unknown error has occured!", message_win)
 
     else:
         globalstate.STATUS = 'login'
