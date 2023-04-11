@@ -61,7 +61,7 @@ class UsersController {
         response.status(500).json({ error: "Internal server error" });
       }
     } else {
-      response.status(401).json({ error: "Unauthorized" });
+      response.status(401).json({ error: "Unauthorized please login again" });
       return;
     }
   }
@@ -78,7 +78,7 @@ class UsersController {
         response.status(401).json({ error: "User not found" });
       }
     } else {
-      response.status(401).json({ error: "Unauthorized" });
+      response.status(401).json({ error: "Unauthorized please login again" });
     }
   }
   static async getUser(request, response) {
@@ -95,7 +95,7 @@ class UsersController {
         response.status(401).json({ error: "User not found" });
       }
     } else {
-      response.status(401).json({ error: "Unauthorized" });
+      response.status(401).json({ error: "Unauthorized please login again" });
     }
   }
   static async editProfile(request, response) {
@@ -131,7 +131,7 @@ class UsersController {
         response.status(500).json({ error: error.message });
       }
     } else {
-      response.status(401).json({ error: "Unauthorized" });
+      response.status(401).json({ error: "Unauthorized please login again" });
     }
   }
 
@@ -141,7 +141,7 @@ class UsersController {
     const userId = await redisClient.get(key);
 
     if (!userId) {
-      response.status(401).json({ error: "Unauthorized" });
+      response.status(401).json({ error: "Unauthorized please login again" });
       return;
     }
 
@@ -269,7 +269,7 @@ class UsersController {
         response.status(401).json({ error: "User not found" });
       }
     } else {
-      response.status(401).json({ error: "Unauthorized" });
+      response.status(401).json({ error: "Unauthorized please login again" });
     }
   }
 }

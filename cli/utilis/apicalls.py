@@ -8,6 +8,18 @@ from utilis.storage import storage
 from utilis.event import connectToSocket
 import curses
 import time
+from utilis import screen_functions
+
+
+def signup(message_win):
+    url = globalstate.BASEURL + '/signup'
+    res = requests.post(
+        url, data=globalstate.HOLDER)
+    if res.status_code != 201 and res.status_code != 202:
+        showError("An error has occured with code: {} \n {}".format(
+            res.status_code, res.text), message_win)
+    else:
+        screen_functions.confirmOtp(message_win)
 
 
 def login(message_win):
@@ -18,9 +30,9 @@ def login(message_win):
         showError("An error has occured with code: {} \n {}".format(
             res.status_code, res.text), message_win)
 
-    elif res.status_code == 205:
-        # opt
-        pass
+    elif res.status_code == 202:
+        globalstate.USERNAME = globalstate.HOLDER['identifier']
+        screen_functions.confirmOtp(message_win, text='')
     else:
         token = res.json().get('token')
         username = res.json().get('user').get('username')
@@ -31,10 +43,26 @@ def login(message_win):
         homepage(message_win)
 
 
-def confirmOTP():
-
+def confirmOTP(message_win):
     url = f'{globalstate.BASEURL}/users/confirmOTP'
-    response = requests.post(url, data=globalstate.HOLDER)
+    res = requests.post(
+        url, data={"identifier": globalstate.USERNAME, "otp": globalstate.HOLDER['otp']})
+
+    if res.status_code != 201 and res.status_code != 202:
+        showError("An error has occured with code: {} \n {}".format(
+            res.status_code, res.text), message_win)
+    else:
+        token = res.json().get('token')
+        username = res.json().get('user').get('username')
+        storage.store('token', token)
+        storage.store('username', username)
+        globalstate.restore()
+        globalstate.TOKEN = token
+        message_win.clear()
+        log('Welcome to ChitChat\n', message_win)
+        log('To make your account publicly searchable, update your profile.\n', message_win)
+        time.sleep(6)
+        homepage(message_win)
 
 
 def startChat(message_win, input_win):
@@ -69,7 +97,7 @@ def startChat(message_win, input_win):
             renderMessage(globalstate.message_win, message)
 
 
-def updateme(message_win):
+def updateprofile(message_win):
     url = globalstate.BASEURL + '/users/editProfile'
 
     res = requests.put(url, data=globalstate.HOLDER, headers={
@@ -131,3 +159,18 @@ def search(message_win, term):
                 renderSearchUser(message_win, user)
         else:
             log('\nNo user found for that search term!\n\n', message_win)
+
+
+def logout(message_win):
+    storage.delete('token')
+    storage.delete('username')
+    globalstate.restore()
+    globalstate.TOKEN = None
+    globalstate.isLoggedIn = False
+    globalstate.USERNAME = None
+    homepage(message_win)
+
+    url = globalstate.BASEURL + '/logout'
+
+    requests.post(url, headers={
+        "X-Token": globalstate.TOKEN})

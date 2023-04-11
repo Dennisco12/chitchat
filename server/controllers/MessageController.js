@@ -52,7 +52,7 @@ const MessageController = {
         recepientID: recepientDetails._id.toString(),
       });
     } else {
-      response.status(401).json({ error: "Unauthorized" });
+      response.status(401).json({ error: "Unauthorized please login again" });
       return;
     }
   },

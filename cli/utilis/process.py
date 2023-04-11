@@ -2,6 +2,7 @@ from utilis import screen_functions
 from globalvaribles import globalstate
 from utilis.helper_functions import homepage, showError
 from utilis.event import sendMessage
+from utilis.apicalls import logout
 
 
 def process_commands(text, message_win, input_win):
@@ -14,37 +15,43 @@ def process_commands(text, message_win, input_win):
         homepage(message_win)
     elif len(text) <= 0:
         return
+    elif globalstate.STATUS == 'confirmotp':
+        screen_functions.confirmOtp(message_win, text)
     elif globalstate.STATUS == 'command':
         text = text.lower().strip()
 
         if globalstate.isLoggedIn:
             if text == 'startchat':
                 screen_functions.startchat(message_win, text, input_win)
-            elif text == 'updateme':
-                screen_functions.updateme(message_win, text)
+            elif text == 'updateprofile':
+                screen_functions.updateprofile(message_win, text)
             elif text == 'viewprofile':
                 screen_functions.viewprofile(message_win, input_win)
             elif text == 'viewuser':
                 screen_functions.viewuser(message_win, input_win)
             elif text == 'search':
                 screen_functions.search(message_win, text, input_win)
+            elif text == 'logout':
+                logout(message_win)
             else:
                 showError(f'Command {text} not found!', message_win)
         else:
             if text == 'signup':
-                pass
+                screen_functions.signup(message_win)
             elif text == 'login':
                 screen_functions.login(message_win)
             else:
                 showError(f'Command {text} not found!', message_win)
     elif globalstate.STATUS == 'login':
         screen_functions.login(message_win, text)
+    elif globalstate.STATUS == 'signup':
+        screen_functions.signup(message_win, text)
     elif globalstate.STATUS == 'startchat':
         screen_functions.startchat(message_win, text, input_win)
     elif globalstate.STATUS == 'message':
         sendMessage(message_win, text)
-    elif globalstate.STATUS == 'updateme':
-        screen_functions.updateme(message_win, text)
+    elif globalstate.STATUS == 'updateprofile':
+        screen_functions.updateprofile(message_win, text)
     elif globalstate.STATUS == 'viewuser':
         screen_functions.viewuser(
             message_win, input_win, text=text.lower().strip())

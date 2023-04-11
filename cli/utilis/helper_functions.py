@@ -12,8 +12,8 @@ def homepage(message_win):
         "To run a command, type the command name and hit Enter.\n")
     menu = []
     if globalstate.isLoggedIn:
-        menu = ["StartChat", "Search", 'UpdateMe',
-                'ViewProfile', 'ViewUser', "Help", "Quit"]
+        menu = ["StartChat", "Search", 'UpdateProfile',
+                'ViewProfile', 'ViewUser', "Help", "Quit", "Logout"]
     else:
         menu = ["Signup", "Login", "ForgotPassword", "Help", "Quit"]
 
@@ -33,11 +33,30 @@ def homepage(message_win):
     message_win.refresh()
 
 
+def replace(message_win, y):
+    width = message_win.getmaxyx()[1]
+    message_win.addstr(y, 0, ' ' * (width-2))
+
+
+def starterase(fy, ly, message_win):
+    n = ly - fy
+    for i in range(n+2):
+        replace(message_win, y=ly - i)
+    message_win.scroll(-1)
+    message_win.refresh()
+
+
 def showError(err, message_win):
+
+    fy = message_win.getyx()[0]
+
     message_win.addstr("\n\nError: ", curses.color_pair(10))
     message_win.addstr(err)
     message_win.refresh()
-    timer = threading.Timer(4, homepage, args=[message_win])
+
+    ly = message_win.getyx()[0]
+
+    timer = threading.Timer(2, starterase, args=[fy, ly, message_win])
     timer.start()
 
 

@@ -86,7 +86,7 @@ const HTMLTemp = {
                     text-align: center;
                   "
                 >
-                  This OTP will expire in 5 minutes. If you did not request this OTP,
+                  This OTP will expire in 30 minutes. If you did not request this OTP,
                   please ignore this email.
                 </p>
               </div>

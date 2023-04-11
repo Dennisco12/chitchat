@@ -26,5 +26,11 @@ class PersistentDataStorage:
     def retrieve(self, key):
         return self.data.get(key, None)
 
+    def delete(self, key):
+        if key in self.data:
+            del self.data[key]
+            with open(self.filename, 'w') as f:
+                json.dump(self.data, f)
+
 
 storage = PersistentDataStorage()

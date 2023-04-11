@@ -11,6 +11,7 @@ router.get("/", (req, res) => {
 
 router.post("/signup", AuthController.getSignup);
 router.post("/login", AuthController.getLogin);
+router.post("/logout", AuthController.getLogout);
 router.post("/resetPassword", AuthController.getResetPassword);
 router.put("/resetPassword", AuthController.getUpdatePassword);
 router.get("/users/me", UsersController.getMe);
