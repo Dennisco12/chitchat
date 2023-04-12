@@ -93,7 +93,8 @@ def startChat(message_win, input_win):
         input_win.move(input_win.getyx()[0], 2)
         input_win.refresh()
         height = message_win.getmaxyx()[0]
-        for message in globalstate.messages[-1*(height-7):]:
+        # [-1*(height-7):]
+        for message in globalstate.messages:
             renderMessage(globalstate.message_win, message)
 
 
@@ -174,3 +175,34 @@ def logout(message_win):
 
     requests.post(url, headers={
         "X-Token": globalstate.TOKEN})
+
+
+def sendpasswordreset(message_win):
+    url = globalstate.BASEURL + '/resetPassword'
+
+    res = requests.post(url, data={
+        "identifier": globalstate.HOLDER['identifier']})
+    if res.status_code != 201:
+        showError("An error has occured with code: {}. \nError message: {}".format(
+            res.status_code, res.text), message_win)
+    else:
+        message_win.clear()
+        globalstate.PLACEHOLDER = 'Otp'
+        message_win.addstr('Reset Password\n\n', curses.color_pair(200))
+        message_win.addstr('Enter otp sent to your email: ', )
+        message_win.refresh()
+
+
+def passwordreset(message_win):
+    url = globalstate.BASEURL + '/resetPassword'
+
+    res = requests.put(url, data={
+        "identifier": globalstate.HOLDER['identifier'], "otp": globalstate.HOLDER['otp'], "password": globalstate.HOLDER['password']})
+    if res.status_code != 201:
+        showError("An error has occured with code: {}. \nError message: {}".format(
+            res.status_code, res.text), message_win)
+    else:
+        log('\n\nPassword reset successfully!\nPlease login.\n', message_win)
+        message_win.refresh()
+        time.sleep(6)
+        homepage(message_win)

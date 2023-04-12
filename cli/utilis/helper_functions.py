@@ -56,7 +56,8 @@ def showError(err, message_win):
 
     ly = message_win.getyx()[0]
 
-    timer = threading.Timer(2, starterase, args=[fy, ly, message_win])
+    timer = threading.Timer(8, homepage, args=[
+        message_win])
     timer.start()
 
 

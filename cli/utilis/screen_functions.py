@@ -397,3 +397,49 @@ def search(message_win, text='', input_win=None):
         message_win.addstr(
             'Please enter a term to search for users: ', )
         message_win.refresh()
+
+
+def forgotpassword(message_win, text=''):
+    if globalstate.STATUS == 'forgotpassword':
+        if globalstate.POS == 0:
+            globalstate.HOLDER['identifier'] = text.lower().strip()
+            globalstate.POS = 1
+            globalstate.PLACEHOLDER = 'Loading'
+            message_win.addstr(f'{text}\n', curses.color_pair(85))
+            message_win.addstr('\nSending reset email... ', )
+            message_win.refresh()
+            try:
+                apicalls.sendpasswordreset(message_win)
+            except:
+                showError("An unknown error has occured!", message_win)
+        elif globalstate.POS == 1:
+            globalstate.HOLDER['otp'] = text
+            globalstate.POS = 2
+            globalstate.PLACEHOLDER = 'Password'
+            message_win.addstr(f'{text}\n', curses.color_pair(85))
+            message_win.addstr('\nEnter new password: ',
+                               curses.color_pair(200))
+            message_win.refresh()
+        elif globalstate.POS == 2:
+            globalstate.HOLDER['password'] = text
+            globalstate.POS = 2
+            globalstate.PLACEHOLDER = 'Loading'
+            globalstate.STATUS = 'loading'
+            message_win.addstr('*'*len(text)+'\n', curses.color_pair(85))
+            message_win.addstr('\n\nReseting password...',
+                               curses.color_pair(200))
+            message_win.refresh()
+            # try:
+            apicalls.passwordreset(message_win)
+            # except:
+            #     showError("An unknown error has occured!", message_win)
+
+    else:
+        globalstate.STATUS = 'forgotpassword'
+        globalstate.PLACEHOLDER = 'Email or Username'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('Reset Password\n\n', curses.color_pair(200))
+        message_win.addstr('Enter your username or email: ', )
+        message_win.refresh()

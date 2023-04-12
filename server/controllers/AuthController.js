@@ -170,7 +170,6 @@ const AuthController = {
         email: identifier,
       });
     } else {
-      // assume identifier is a username
       user = await Functions.searchUser({
         username: identifier,
       });
@@ -197,7 +196,7 @@ const AuthController = {
         { $set: { password: hashedPassword }, $unset: { otp: "" } }
       );
     }
-    await redisClient.del(user._id);
+    await redisClient.del(user._id.toString());
     response.status(201).json({ message: "Password updated successfully" });
   },
 };

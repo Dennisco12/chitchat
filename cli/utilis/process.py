@@ -40,6 +40,8 @@ def process_commands(text, message_win, input_win):
                 screen_functions.signup(message_win)
             elif text == 'login':
                 screen_functions.login(message_win)
+            elif text == 'forgotpassword':
+                screen_functions.forgotpassword(message_win, text)
             else:
                 showError(f'Command {text} not found!', message_win)
     elif globalstate.STATUS == 'login':
@@ -57,6 +59,8 @@ def process_commands(text, message_win, input_win):
             message_win, input_win, text=text.lower().strip())
     elif globalstate.STATUS == 'search':
         screen_functions.search(message_win, text, input_win)
+    elif globalstate.STATUS == 'forgotpassword':
+        screen_functions.forgotpassword(message_win, text)
     elif globalstate.STATUS == 'loading':
         pass
     else:
