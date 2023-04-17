@@ -57,9 +57,9 @@ const AuthController = {
     const id = await redisClient.get(key);
     if (id) {
       await redisClient.del(key);
-      response.status(204).json({});
+      response.status(200).json({});
     } else {
-      response.status(401).json({ error: "Unauthorized" });
+      response.status(401).json({ error: "Unauthorized please login again" });
     }
   },
 
@@ -105,9 +105,13 @@ const AuthController = {
         return;
       } else {
         Functions.generateOTP(user.email, user.username, "sendOtp");
+        console.log({
+          message: "Verification otp sent to your email",
+          username: user.username,
+        });
         response
-          .status(205)
-          .json({ message: "Verification otp sent to your email" });
+          .status(202)
+          .json({ message: "Verification otp sent to your email", user });
       }
     } else {
       response
@@ -166,7 +170,6 @@ const AuthController = {
         email: identifier,
       });
     } else {
-      // assume identifier is a username
       user = await Functions.searchUser({
         username: identifier,
       });
@@ -193,7 +196,7 @@ const AuthController = {
         { $set: { password: hashedPassword }, $unset: { otp: "" } }
       );
     }
-    await redisClient.del(user._id);
+    await redisClient.del(user._id.toString());
     response.status(201).json({ message: "Password updated successfully" });
   },
 };

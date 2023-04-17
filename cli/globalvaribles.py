@@ -3,7 +3,7 @@ from utilis.storage import storage
 
 class GlobalState():
 
-    BASEURL = 'https://c596-102-88-62-63.ngrok-free.app'
+    BASEURL = 'http://localhost:3000'
     STATUS = 'command'
     PLACEHOLDER = "Command"
     HOLDER = {}

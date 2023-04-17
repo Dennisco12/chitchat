@@ -39,6 +39,48 @@ from utilis.helper_functions import showError, log
 #     return False
 
 
+def signup(message_win, text=''):
+    if globalstate.STATUS == 'signup':
+        if globalstate.POS == 0:
+            globalstate.HOLDER['email'] = text.lower().strip()
+            globalstate.POS = 1
+            globalstate.PLACEHOLDER = 'Password'
+            message_win.addstr(f'{text}\n', curses.color_pair(85))
+            message_win.addstr('Enter your password: ', )
+            message_win.refresh()
+        elif globalstate.POS == 1:
+            globalstate.HOLDER['password'] = text
+            globalstate.POS = 2
+            globalstate.PLACEHOLDER = 'Username'
+            message_win.addstr('*'*len(text)+'\n', curses.color_pair(85))
+            message_win.addstr('Enter a unique username: ')
+            message_win.refresh()
+        elif globalstate.POS == 2:
+            globalstate.HOLDER['username'] = text.lower().strip()
+            globalstate.USERNAME = text.lower().strip()
+            globalstate.POS = 3
+            globalstate.PLACEHOLDER = 'Loading'
+            globalstate.STATUS = 'loading'
+            message_win.addstr('*'*len(text)+'\n', curses.color_pair(85))
+            message_win.addstr('\n\nCreating your account...',
+                               curses.color_pair(200))
+            message_win.refresh()
+            try:
+                apicalls.signup(message_win)
+            except:
+                showError("An unknown error has occured!", message_win)
+
+    else:
+        globalstate.STATUS = 'signup'
+        globalstate.PLACEHOLDER = 'Email'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('Create Account\n\n', curses.color_pair(200))
+        message_win.addstr('Enter your email: ', )
+        message_win.refresh()
+
+
 def login(message_win, text=''):
     """This takes in username or email and password and 
     creates a session for the user"""
@@ -74,6 +116,31 @@ def login(message_win, text=''):
         message_win.refresh()
 
 
+def confirmOtp(message_win, text=''):
+
+    if globalstate.STATUS == 'confirmotp':
+        globalstate.HOLDER['otp'] = text
+        globalstate.PLACEHOLDER = 'Loading'
+        globalstate.STATUS = 'loading'
+        message_win.addstr(f'{text}\n', curses.color_pair(85))
+        message_win.addstr('\n\nConfirming Otp...', curses.color_pair(200))
+        message_win.refresh()
+        try:
+            apicalls.confirmOTP(message_win)
+        except:
+            showError("An unknown error has occured!", message_win)
+
+    else:
+        globalstate.STATUS = 'confirmotp'
+        globalstate.PLACEHOLDER = 'Otp'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('Verify Email\n\n', curses.color_pair(200))
+        message_win.addstr('Enter the code sent to your email: ', )
+        message_win.refresh()
+
+
 def startchat(message_win, text='', input_win=None):
     if globalstate.STATUS == 'startchat':
         globalstate.HOLDER['username'] = text.lower().strip()
@@ -86,10 +153,10 @@ def startchat(message_win, text='', input_win=None):
                          curses.color_pair(236))
         input_win.move(input_win.getyx()[0], 2)
         input_win.refresh()
-        # try:
-        apicalls.startChat(message_win, input_win)
-        # except:
-        #     showError("An unknown error has occured!", message_win)
+        try:
+            apicalls.startChat(message_win, input_win)
+        except:
+            showError("An unknown error has occured!", message_win)
     else:
         globalstate.STATUS = 'startchat'
         globalstate.PLACEHOLDER = 'Username'
@@ -102,8 +169,8 @@ def startchat(message_win, text='', input_win=None):
         message_win.refresh()
 
 
-def updateme(message_win, text=''):
-    if globalstate.STATUS == 'updateme':
+def updateprofile(message_win, text=''):
+    if globalstate.STATUS == 'updateprofile':
         if globalstate.POS == 0:
             globalstate.HOLDER['firstName'] = text.strip()
             message_win.addstr(f' {text}\n', curses.color_pair(85))
@@ -146,11 +213,11 @@ def updateme(message_win, text=''):
                 'Your profile would be publicly searchable now!')
             message_win.refresh()
             try:
-                apicalls.updateme(message_win)
+                apicalls.updateprofile(message_win)
             except:
                 showError("An unknown error has occured!", message_win)
     else:
-        globalstate.STATUS = 'updateme'
+        globalstate.STATUS = 'updateprofile'
         globalstate.PLACEHOLDER = 'Firstname'
         globalstate.POS = 0
         globalstate.HOLDER = {}
@@ -293,3 +360,86 @@ def runhelp(message_win,):
     message_win.addstr(
         '1. Back')
     message_win.refresh()
+
+
+def search(message_win, text='', input_win=None):
+    if globalstate.STATUS == 'search':
+        message_win.addstr(f'{text}\n', curses.color_pair(85))
+        globalstate.PLACEHOLDER = 'Loading'
+        globalstate.STATUS = 'loading'
+        input_win.clear()
+        input_win.addstr("> ")
+        input_win.addstr(f'{globalstate.PLACEHOLDER}...',
+                         curses.color_pair(236))
+        input_win.move(input_win.getyx()[0], 2)
+        message_win.refresh()
+        input_win.refresh()
+        try:
+            apicalls.search(message_win, term=text.strip())
+        except:
+            showError("An unknown error has occured!", message_win)
+        globalstate.PLACEHOLDER = 'Search'
+        globalstate.STATUS = 'search'
+        message_win.addstr("\nMenu:\n", curses.color_pair(47))
+        message_win.addstr(
+            '1. [Another search term]\n')
+        message_win.addstr(
+            '2. Back')
+        message_win.refresh()
+
+    else:
+        globalstate.STATUS = 'search'
+        globalstate.PLACEHOLDER = 'Search'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('Find People\n\n', curses.color_pair(200))
+        message_win.addstr(
+            'Please enter a term to search for users: ', )
+        message_win.refresh()
+
+
+def forgotpassword(message_win, text=''):
+    if globalstate.STATUS == 'forgotpassword':
+        if globalstate.POS == 0:
+            globalstate.HOLDER['identifier'] = text.lower().strip()
+            globalstate.POS = 1
+            globalstate.PLACEHOLDER = 'Loading'
+            message_win.addstr(f'{text}\n', curses.color_pair(85))
+            message_win.addstr('\nSending reset email... ', )
+            message_win.refresh()
+            try:
+                apicalls.sendpasswordreset(message_win)
+            except:
+                showError("An unknown error has occured!", message_win)
+        elif globalstate.POS == 1:
+            globalstate.HOLDER['otp'] = text
+            globalstate.POS = 2
+            globalstate.PLACEHOLDER = 'Password'
+            message_win.addstr(f'{text}\n', curses.color_pair(85))
+            message_win.addstr('\nEnter new password: ',
+                               curses.color_pair(200))
+            message_win.refresh()
+        elif globalstate.POS == 2:
+            globalstate.HOLDER['password'] = text
+            globalstate.POS = 2
+            globalstate.PLACEHOLDER = 'Loading'
+            globalstate.STATUS = 'loading'
+            message_win.addstr('*'*len(text)+'\n', curses.color_pair(85))
+            message_win.addstr('\n\nReseting password...',
+                               curses.color_pair(200))
+            message_win.refresh()
+            # try:
+            apicalls.passwordreset(message_win)
+            # except:
+            #     showError("An unknown error has occured!", message_win)
+
+    else:
+        globalstate.STATUS = 'forgotpassword'
+        globalstate.PLACEHOLDER = 'Email or Username'
+        globalstate.POS = 0
+        globalstate.HOLDER = {}
+        message_win.clear()
+        message_win.addstr('Reset Password\n\n', curses.color_pair(200))
+        message_win.addstr('Enter your username or email: ', )
+        message_win.refresh()

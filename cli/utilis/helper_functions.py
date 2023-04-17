@@ -12,8 +12,8 @@ def homepage(message_win):
         "To run a command, type the command name and hit Enter.\n")
     menu = []
     if globalstate.isLoggedIn:
-        menu = ["StartChat", "Search", 'UpdateMe',
-                'ViewProfile', 'ViewUser', "Help", "Quit"]
+        menu = ["StartChat", "Search", 'UpdateProfile',
+                'ViewProfile', 'ViewUser', "Help", "Quit", "Logout"]
     else:
         menu = ["Signup", "Login", "ForgotPassword", "Help", "Quit"]
 
@@ -33,11 +33,31 @@ def homepage(message_win):
     message_win.refresh()
 
 
+def replace(message_win, y):
+    width = message_win.getmaxyx()[1]
+    message_win.addstr(y, 0, ' ' * (width-2))
+
+
+def starterase(fy, ly, message_win):
+    n = ly - fy
+    for i in range(n+2):
+        replace(message_win, y=ly - i)
+    message_win.scroll(-1)
+    message_win.refresh()
+
+
 def showError(err, message_win):
+
+    fy = message_win.getyx()[0]
+
     message_win.addstr("\n\nError: ", curses.color_pair(10))
     message_win.addstr(err)
     message_win.refresh()
-    timer = threading.Timer(4, homepage, args=[message_win])
+
+    ly = message_win.getyx()[0]
+
+    timer = threading.Timer(8, homepage, args=[
+        message_win])
     timer.start()
 
 
@@ -63,4 +83,23 @@ def renderMessage(message_win, message):
         COLOR = curses.color_pair(200)
     message_win.addstr(f"[{time} {senderusername}]: ", COLOR)
     message_win.addstr(msg+'\n')
+    message_win.refresh()
+
+
+def renderSearchUser(message_win, user={}):
+    user1 = {'_id': '642ff43b427574d2800c9906', 'email': 'akinwonjowodennisco@gmail.com', 'username': 'dennisco',
+             'profileDetails': {'firstName': 'Dennis', 'lastName': 'Akinwonjowodenn',
+                                'bio': 'I am a Python developer, I use the flask framwork. Im also learning Javascript', 'level': 'Intermediate', 'techStack': 'Python, JavaScript, C'}}
+    profileDetails = user.get('profileDetails')
+    message_win.addstr(
+        f'{profileDetails.get("firstName")} {profileDetails.get("lastName")}', curses.color_pair(85))
+    message_win.addstr(
+        f'\n{profileDetails.get("bio")}\n', curses.color_pair(200))
+    message_win.addstr(
+        f'{user.get("username")}  {user.get("email")}\n', curses.color_pair(46))
+
+    message_win.addstr(
+        f'{profileDetails.get("level")}', curses.color_pair(184))
+    message_win.addstr(
+        f'\n{profileDetails.get("techStack")}\n\n', curses.color_pair(200))
     message_win.refresh()
