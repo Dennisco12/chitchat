@@ -4,7 +4,7 @@ const Mailer = require("./utils/mailer");
 const Functions = require("./utils/functions");
 const Queue = require("bull");
 
-const userQueue = new Queue("userQueue", "redis://127.0.0.1:6379");
+const userQueue = new Queue("userQueue", process.env.REDIS_URL);
 
 userQueue.process(async (job, done) => {
   const { userId, type } = job.data;
