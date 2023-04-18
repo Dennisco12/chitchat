@@ -5,7 +5,8 @@ class DBClient {
     const host = process.env.DB_HOST || "localhost";
     const port = process.env.DB_PORT || 27017;
     const database = process.env.DB_DATABASE || "chit_chat";
-    const uri = `mongodb://${host}:${port}/${database}`;
+    const uri =
+      "mongodb+srv://chit_chatuser:5wOV4K083ZdGYfdM@cluster0.iy1lmun.mongodb.net/chit_chat?retryWrites=true&w=majority";
     this.client = new MongoClient(uri, {
       useUnifiedTopology: true,
     });

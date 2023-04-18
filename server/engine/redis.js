@@ -6,7 +6,9 @@ class RedisClient {
   }
 
   async init() {
-    this.client = redis.createClient();
+    this.client = redis.createClient({
+      url: "redis://red-cgve6iodh87i4q2ks4f0:6379",
+    });
     await this.client.connect();
     this.client.on("error", (err) => {
       console.error("Redis error:", err);
