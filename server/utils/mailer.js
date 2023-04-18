@@ -443,7 +443,7 @@ const Mailer = {
         address: "chitchatcli@gmail.com",
       },
       to,
-      subject: "Welcome to ChitChat",
+      subject: "New ChitChat Message",
       html: HTMLTemp.newmessage(username, senderusername, message),
     };
 

@@ -2,7 +2,7 @@ import curses
 from curses import wrapper
 from chitchatcli.utilis.process import process_commands
 from chitchatcli.globalvaribles import globalstate
-from chitchatcli.utilis.helper_functions import homepage, log, showError
+from chitchatcli.utilis.helper_functions import homepage
 
 
 def main(stdscr):

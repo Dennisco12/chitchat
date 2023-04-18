@@ -3,15 +3,18 @@ from chitchatcli.globalvaribles import globalstate
 from chitchatcli.utilis.helper_functions import homepage, showError
 from chitchatcli.utilis.event import sendMessage
 from chitchatcli.utilis.apicalls import logout
+from chitchatcli.utilis.event import disconnectFromSocket
 
 
 def process_commands(text, message_win, input_win):
     if text.lower().strip() == 'help':
         screen_functions.runhelp(message_win)
     elif text.lower().strip() == 'quit':
+        disconnectFromSocket()
         globalstate.RUNNING = False
         return
     elif text == 'back':
+        disconnectFromSocket()
         homepage(message_win)
     elif len(text) <= 0:
         return

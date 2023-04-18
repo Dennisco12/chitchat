@@ -4,20 +4,10 @@
 
 import socketio
 from chitchatcli.globalvaribles import globalstate
-from chitchatcli.utilis.helper_functions import renderMessage, showError
+from chitchatcli.utilis.helper_functions import renderMessage
 from datetime import datetime
 
 sio = socketio.Client()
-
-
-@sio.event
-def connect():
-    pass
-
-
-@sio.event
-def disconnect():
-    showError('Disconnected from server', message_win=globalstate.message_win)
 
 
 @sio.event
@@ -27,6 +17,10 @@ def message(data):
 
 def connectToSocket():
     sio.connect(globalstate.BASEURL, headers={'X-Token': globalstate.TOKEN})
+
+
+def disconnectFromSocket():
+    sio.disconnect()
 
 
 def sendMessage(message_win, message):

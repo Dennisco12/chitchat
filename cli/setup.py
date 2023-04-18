@@ -9,7 +9,7 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
 
 setup(
     name="chitchatcli",
-    version="0.0.1",
+    version="0.0.2",
     author="Benjamin Eruvieru",
     author_email="benjamineruvieru@gmail.com",
     description="A command line chatting software designed for developers to communicate with each other.",
