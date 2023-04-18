@@ -3,8 +3,8 @@
 """This module defines all the socket functions"""
 
 import socketio
-from globalvaribles import globalstate
-from utilis.helper_functions import renderMessage, showError
+from chitchatcli.globalvaribles import globalstate
+from chitchatcli.utilis.helper_functions import renderMessage, showError
 from datetime import datetime
 
 sio = socketio.Client()

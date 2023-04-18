@@ -1,14 +1,14 @@
 import requests
-from globalvaribles import globalstate
-from utilis.helper_functions import showError, homepage, log, renderSearchUser
-from utilis.storage import storage
-from globalvaribles import globalstate
-from utilis.helper_functions import showError, homepage, log, renderMessage
-from utilis.storage import storage
-from utilis.event import connectToSocket
+from chitchatcli.globalvaribles import globalstate
+from chitchatcli.utilis.helper_functions import showError, homepage, log, renderSearchUser
+from chitchatcli.utilis.storage import storage
+from chitchatcli.globalvaribles import globalstate
+from chitchatcli.utilis.helper_functions import showError, homepage, log, renderMessage
+from chitchatcli.utilis.storage import storage
+from chitchatcli.utilis.event import connectToSocket
 import curses
 import time
-from utilis import screen_functions
+from chitchatcli.utilis import screen_functions
 
 
 def signup(message_win):

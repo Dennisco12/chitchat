@@ -1,6 +1,6 @@
 import curses
 import threading
-from globalvaribles import globalstate
+from chitchatcli.globalvaribles import globalstate
 from datetime import datetime
 
 

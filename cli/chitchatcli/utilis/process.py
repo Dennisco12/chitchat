@@ -1,8 +1,8 @@
-from utilis import screen_functions
-from globalvaribles import globalstate
-from utilis.helper_functions import homepage, showError
-from utilis.event import sendMessage
-from utilis.apicalls import logout
+from chitchatcli.utilis import screen_functions
+from chitchatcli.globalvaribles import globalstate
+from chitchatcli.utilis.helper_functions import homepage, showError
+from chitchatcli.utilis.event import sendMessage
+from chitchatcli.utilis.apicalls import logout
 
 
 def process_commands(text, message_win, input_win):

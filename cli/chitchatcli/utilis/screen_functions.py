@@ -1,7 +1,7 @@
-from globalvaribles import globalstate
+from chitchatcli.globalvaribles import globalstate
 import curses
-from utilis import apicalls
-from utilis.helper_functions import showError, log
+from chitchatcli.utilis import apicalls
+from chitchatcli.utilis.helper_functions import showError, log
 # def signup():
 #     """This creates a user in the database
 #     return the user id and token"""
