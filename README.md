@@ -20,6 +20,6 @@ The console which is the client interface was written in python
 ![image](https://user-images.githubusercontent.com/99836377/232632280-ae124d9c-2629-4731-bbdf-da45cb31149b.png)
 
 ## AUTHORS
-Akinwonjowo Dennis [Github](https://github.com/Dennisco12) / [LinkedIn](https://linkedin.com/dennis-akinwonjowo)</br>
+Akinwonjowo Dennis [Github](https://github.com/Dennisco12) / [LinkedIn](https://www.linkedin.com/in/dennis-akinwonjowo)</br>
 Benjamin Eruvieru [Github](https://github.com/benjamineruvieru) / [email](benjamineruvieru@gmail.com)</br>
-Nnaemeka Joseph [Github](https://github.com/nnaemekaxi) / [email](nnaemekaxi@yahoo.com)</br>
+Nnaemeka Joseph [Github](https://github.com/nnaemekaxi) / [LinkedIn](https://www.linkedin.com/in/nnaemeka11/)</br>
