@@ -9,7 +9,7 @@ class PersistentDataStorage:
         data_dir = os.path.join(base_dir, 'chitchat_data')
         os.makedirs(data_dir, exist_ok=True)
         secret_file = os.path.join(data_dir, 'secret.txt')
-        self.filename = 'chitchat1.txt'
+        self.filename = secret_file
         if os.path.isfile(self.filename):
             with open(self.filename, 'r') as f:
                 self.data = json.load(f)

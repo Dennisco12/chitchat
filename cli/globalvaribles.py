@@ -3,7 +3,7 @@ from utilis.storage import storage
 
 class GlobalState():
 
-    BASEURL = 'http://localhost:3000'
+    BASEURL = 'https://chitchat-25ug.onrender.com:3000'
     STATUS = 'command'
     PLACEHOLDER = "Command"
     HOLDER = {}

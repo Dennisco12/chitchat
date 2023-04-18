@@ -8,7 +8,7 @@ Chitchat hopes to add a little bit of social life to many developers who prefer 
 . Clone the project repository from github into your local computer
 . Download the neccessary packages in the requirement.txt file
 . Navigate into the cli directory
-run ``` python3 -n newconsole ```
+run ``` python3 -m chitchat ```
 
 ## TECHNOLOGIES USED
 Mongodb is used to store the required data
@@ -21,5 +21,5 @@ The console which is the client interface was written in python
 
 ## AUTHORS
 Akinwonjowo Dennis [Github](https://github.com/Dennisco12) / [LinkedIn](https://www.linkedin.com/in/dennis-akinwonjowo)</br>
-Benjamin Eruvieru [Github](https://github.com/benjamineruvieru) / [email](benjamineruvieru@gmail.com)</br>
+Benjamin Eruvieru [Github](https://github.com/benjamineruvieru) / [LinkedIn](https://www.linkedin.com/in/benjamineruvieru) / [email](benjamineruvieru@gmail.com)</br>
 Nnaemeka Joseph [Github](https://github.com/nnaemekaxi) / [LinkedIn](https://www.linkedin.com/in/nnaemeka11/)</br>
