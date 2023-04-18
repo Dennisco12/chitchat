@@ -2,6 +2,7 @@ const MessageController = require("../controllers/MessageController");
 const redisClient = require("../engine/redis");
 const Functions = require("../utils/functions");
 const { ObjectId } = require("mongodb");
+const { notifyQueue } = require("../worker");
 
 module.exports = function (io) {
   const checkToken = async (socket, next) => {
@@ -43,6 +44,12 @@ module.exports = function (io) {
           recepientID: recepientID,
           createdAt: new Date().getTime(),
           senderusername: socket.username,
+        });
+      } else {
+        notifyQueue.add({
+          userId: recepientID,
+          senderusername: socket.username,
+          message,
         });
       }
       console.log(

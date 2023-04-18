@@ -2,7 +2,7 @@ const sha1 = require("sha1");
 const dbClient = require("../engine/db_storage");
 const redisClient = require("../engine/redis");
 const { v4: uuidv4 } = require("uuid");
-const userQueue = require("../worker");
+const { userQueue } = require("../worker");
 const Functions = require("../utils/functions");
 
 const AuthController = {

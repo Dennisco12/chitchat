@@ -4,7 +4,7 @@ const redisClient = require("../engine/redis");
 const otpGenerator = require("otp-generator");
 const Mailer = require("../utils/mailer");
 const { v4: uuidv4 } = require("uuid");
-const userQueue = require("../worker");
+const { userQueue } = require("../worker");
 const Functions = require("../utils/functions");
 
 class UsersController {

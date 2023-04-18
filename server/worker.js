@@ -26,4 +26,21 @@ userQueue.process(async (job, done) => {
   }
 });
 
-module.exports = userQueue;
+const notifyQueue = new Queue("notifyQueue", process.env.REDIS_URL);
+
+notifyQueue.process(async (job, done) => {
+  const { userId, senderusername, message } = job.data;
+
+  if (!userId) done(new Error("Missing userId"));
+  const idObject = new ObjectId(userId);
+  const user = await Functions.searchUser({ _id: idObject });
+  if (user) {
+    console.log(`Sending new message email to ${user.email}!`);
+    Mailer.sendNewMsgEmail(user.email, user.username, senderusername, message);
+    done();
+  } else {
+    done(new Error("User not found"));
+  }
+});
+
+module.exports = { userQueue, notifyQueue };
