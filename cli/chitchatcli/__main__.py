@@ -1,3 +1,11 @@
+#!/usr/bin/python3
+
+"""This module contains the main function for the chitchatcli application.
+
+The main function is responsible for setting up the curses environment, 
+handling user input and calling the process_commands function to execute 
+the user's commands.
+"""
 import curses
 from curses import wrapper
 from chitchatcli.utilis.process import process_commands
@@ -6,6 +14,14 @@ from chitchatcli.utilis.helper_functions import homepage
 
 
 def main(stdscr):
+    """Main function of the chitchatcli application.
+
+    This function sets up the curses environment, handles user input and 
+    calls the process_commands function to execute the user's commands.
+
+    Args:
+        stdscr (curses window object): The curses window object.
+    """
     stdscr = curses.initscr()
     stdscr.clear()
     height, width = stdscr.getmaxyx()
