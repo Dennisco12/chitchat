@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from chitchatcli.utilis import screen_functions
 from chitchatcli.globalvaribles import globalstate
 from chitchatcli.utilis.helper_functions import homepage, showError
@@ -7,6 +9,7 @@ from chitchatcli.utilis.event import disconnectFromSocket
 
 
 def process_commands(text, message_win, input_win):
+    """Processes the user commands and performs the appropriate action"""
     if text.lower().strip() == 'help':
         screen_functions.runhelp(message_win)
     elif text.lower().strip() == 'quit':

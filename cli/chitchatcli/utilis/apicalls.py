@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+
+"""
+This module contains all api requests functions.
+"""
 import requests
 from chitchatcli.globalvaribles import globalstate
 from chitchatcli.utilis.helper_functions import showError, homepage, log, renderSearchUser
@@ -12,6 +17,9 @@ from chitchatcli.utilis import screen_functions
 
 
 def signup(message_win):
+    """Signup function docstring
+    This function handles the signup process for a new user.
+    """
     url = globalstate.BASEURL + '/signup'
     res = requests.post(
         url, data=globalstate.HOLDER)
@@ -23,6 +31,9 @@ def signup(message_win):
 
 
 def login(message_win):
+    """Login function docstring
+    This function handles the login process for an existing user.
+    """
     url = globalstate.BASEURL + '/login'
     res = requests.post(
         url, data=globalstate.HOLDER)
