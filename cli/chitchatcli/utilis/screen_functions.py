@@ -1,45 +1,14 @@
+"""This module contains functions for changing the cli view when a command is entered"""
+
 from chitchatcli.globalvaribles import globalstate
 import curses
 from chitchatcli.utilis import apicalls
 from chitchatcli.utilis.helper_functions import showError, log
-# def signup():
-#     """This creates a user in the database
-#     return the user id and token"""
-#     email = input(Fore.BLUE + "Please enter your email: ")
-#     while len(email) == 0:
-#         print(Fore.RED + "* Email field cannot be empty, please try again *")
-#         email = input(Fore.BLUE + "Please enter your email: ")
-#     username = input(Fore.BLUE + "Please enter your username: ")
-#     password = input(Fore.BLUE + "Please enter your password: ")
-#     url = f'{self.baseurl}/signup'
-#     data = {"email": email, "username": username, "password": password}
-#     response = requests.post(url, data=data)
-#     if response.status_code != 201:
-#         print(Fore.RED + "An error has occurred with code:",
-#                 response.status_code, "\n", response.text)
-#     else:
-#         print(Fore.GREEN+'Your account has been created succesfully')
-#         otp = input(Fore.BLUE + 'Enter the OTP sent to your email: ')
-#         url = self.baseurl + '/users/confirmOTP'
-#         res = requests.post(url, data={"otp": otp, "identifier": email})
-#         if res.status_code == 201:
-#             print(Fore.GREEN + "...Verification succesful...")
-#             token = res.text
-#         else:
-#             otp = input(
-#                 Fore.RED + "Verification failed, you have one attempt left: ")
-#             res = requests.post(
-#                 url, data={"otp": otp, "identifier": email})
-#             if res.status_code == 201:
-#                 print(Fore.GREEN + "...Verification succesful...")
-#                 token = user.get('token')
-#                 self.prompt = "({}) ".format(username)
-#             else:
-#                 print(Fore.RED + "...Verification failed...")
-#     return False
 
 
 def signup(message_win, text=''):
+    """This function takes in user's email, password and username 
+    and creates a new account for the user"""
     if globalstate.STATUS == 'signup':
         if globalstate.POS == 0:
             globalstate.HOLDER['email'] = text.lower().strip()
@@ -429,10 +398,10 @@ def forgotpassword(message_win, text=''):
             message_win.addstr('\n\nReseting password...',
                                curses.color_pair(200))
             message_win.refresh()
-            # try:
-            apicalls.passwordreset(message_win)
-            # except:
-            #     showError("An unknown error has occured!", message_win)
+            try:
+                apicalls.passwordreset(message_win)
+            except:
+                showError("An unknown error has occured!", message_win)
 
     else:
         globalstate.STATUS = 'forgotpassword'
